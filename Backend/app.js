@@ -18,7 +18,7 @@ app.use((err, req, res, next) => {
 
 mongoose
   .connect(
-    "mongodb+srv://ranakagrawal:<password>@college-work.j27dolr.mongodb.net/?retryWrites=true&w=majority"
+    "mongodb+srv://ranakagrawal:ranak123@college-work.j27dolr.mongodb.net/?retryWrites=true&w=majority"
   )
   .then(() => {
     console.log("Database and server connected!");
