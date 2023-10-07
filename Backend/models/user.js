@@ -21,6 +21,28 @@ var userSchema = new Schema(
       trim: true,
       max: 64,
     },
+    enrollmentNumber: {
+      type: Number,
+      trim: true,
+    },
+    department: {
+      type: String,
+      enum: [
+        "CS",
+        "IT",
+        "CSIT",
+        "CS-DS",
+        "CS-AIML",
+        "CS-IOT",
+        "EC",
+        "ME",
+        "CIVIL",
+      ],
+    },
+    qrImage: {
+      type: String,
+      trim: true,
+    },
     role: {
       type: String,
       required: true,
