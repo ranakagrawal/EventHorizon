@@ -1,10 +1,8 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
-
 exports.userLogin = (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    const {email,password} = req.body;
     User.findOne({ email: email })
         .then((result) => {
         if (!result) {
