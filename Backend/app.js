@@ -12,8 +12,8 @@ app.use(bodyParser.json());
 
 const routes = require("./routes");
 
-const filePath = path.join(__dirname, "./assets");
-app.use("/assets", express.static(filePath));
+// const filePath = path.join(__dirname, "./assets");
+// app.use("/assets", express.static(filePath));
 
 app.use("/", routes);
 

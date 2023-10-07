@@ -31,17 +31,17 @@ exports.createVenue = async (req, res, next) => {
 exports.createAcademicEvent = async (req, res, next) => {
     try {
         const { name, startDate, endDate, targetedDept } = req.body;
-
+        const targetedDeptArray = targetedDept.split(',');
         const newAcademicEvent = new AcademicEvent({
         name,
         startDate,
         endDate,
-        targetedDept,
+        targetedDept: targetedDeptArray,
         });
 
         await newAcademicEvent.save();
 
-        res.status(201).json({ message: 'Academic event created successfully by Admin'});
+        res.status(201).json({ message: 'Academic event created successfully by Admin',event: newAcademicEvent});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while creating the academic event' });

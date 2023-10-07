@@ -19,7 +19,7 @@ var accessSchema = new Schema(
       required: true,
     },
     editable: {
-      type: Bool,
+      type: Boolean,
     }, //access token
   },
   { timestamps: true }
