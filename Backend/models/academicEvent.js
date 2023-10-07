@@ -15,6 +15,7 @@ var academicEventSchema = new Schema(
     endDate: {
       type: Date,
     },
+    targetedDept: [{ type: String }],
   },
   { timestamps: true }
 );
