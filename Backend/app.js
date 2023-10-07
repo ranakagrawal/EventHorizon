@@ -16,7 +16,16 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Starting server
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+mongoose
+  .connect(
+    "mongodb+srv://ranakagrawal:<password>@college-work.j27dolr.mongodb.net/?retryWrites=true&w=majority"
+  )
+  .then(() => {
+    console.log("Database and server connected!");
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+      });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
