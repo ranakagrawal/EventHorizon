@@ -21,7 +21,7 @@ var userSchema = new Schema(
       trim: true,
       max: 64,
     },
-    enrollmentNumber: {
+    enrollmentNo: {
       type: Number,
       trim: true,
     },
