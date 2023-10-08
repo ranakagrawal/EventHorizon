@@ -3,6 +3,7 @@ import { View, Text } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../Stylesheet/stylesheet';
+import NavBar from '../Components/navbar';
 
 const Home = () => {
     const navigator = useNavigation();
@@ -27,7 +28,8 @@ const Home = () => {
 
     return (
         <View style={styles.AppBg}>
-            <Text style={styles.TextStyle}>Hello World!</Text>
+            <NavBar />
+            {/* <Text style={styles.TextStyle}>Hello World!</Text> */}
             <Calendar
                 enableSwipeMonths
                 style={{
