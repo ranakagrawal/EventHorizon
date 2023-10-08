@@ -40,7 +40,7 @@ exports.editVenue = async (req, res, next) => {
   try {
     const venueId = req.params.id;
     const { name, description, capacity } = req.body;
-    const venueImages = req.file.path.replace("\\", "/");
+    const venueImages = req.file.path.split("\\").join("/");
 
     const updatedVenue = await Venue.findByIdAndUpdate(
       venueId,
