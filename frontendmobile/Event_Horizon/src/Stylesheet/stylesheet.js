@@ -12,6 +12,15 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 24,
     },
+    eventItem: {
+        // padding: 10,
+        borderWidth: 2,
+        borderColor: '#ddd',
+    },
+    emptyDate: {
+        alignContent: 'center',
+        alignSelf: 'center'
+    },
 });
 
 export default styles;
