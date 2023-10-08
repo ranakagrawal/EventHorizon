@@ -11,8 +11,7 @@ const xlsx = require("xlsx");
 // POST route for creating venue
 exports.createVenue = async (req, res, next) => {
   try {
-    const { name, description, capacity } = req.body;
-    console.log(req.files);
+    const { name, description, capacity } = req.body
     const venueImages = [];
     req.files.map((file) => {
       venueImages.push(file.path.split("\\").join("/"));
@@ -82,7 +81,7 @@ exports.addVenueImage = async (req, res, next) => {
     if (!updatedVenue) {
       return res.status(404).json({ error: "Venue event not found" });
     }
-    updatedVenue.venueImages = venueImages.concat(updatedImages);
+    updatedVenue.venueImages = updatedVenue.venueImages.concat(updatedImages);
     await updatedVenue.save();
 
     res.status(200).json({
@@ -101,7 +100,7 @@ exports.deleteVenueImage = async (req, res, next) => {
   try {
     const venueId = req.params.id;
     const deletedImage = req.body.venueImagePath;
-    const updatedImages = [];
+    let updatedImages = [];
 
     const updatedVenue = await Venue.findById(venueId);
     if (!updatedVenue) {
