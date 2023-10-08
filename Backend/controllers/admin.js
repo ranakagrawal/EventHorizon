@@ -43,7 +43,6 @@ exports.editVenue = async (req, res, next) => {
   try {
     const venueId = req.params.id;
     const { name, description, capacity } = req.body;
-    const venueImages = req.file.path.split("\\").join("/");
 
     const updatedVenue = await Venue.findByIdAndUpdate(
       venueId,
@@ -51,7 +50,6 @@ exports.editVenue = async (req, res, next) => {
         name,
         description,
         capacity,
-        venueImages,
       },
       { new: true }
     );
@@ -69,6 +67,64 @@ exports.editVenue = async (req, res, next) => {
     res
       .status(500)
       .json({ error: "An error occurred while updating the venue" });
+  }
+};
+
+exports.addVenueImage = async (req, res, next) => {
+  try {
+    const venueId = req.params.id;
+    const updatedImages = [];
+    req.files.map((file) => {
+      updatedImages.push(file.path.split("\\").join("/"));
+    });
+
+    const updatedVenue = await Venue.findById(venueId);
+    if (!updatedVenue) {
+      return res.status(404).json({ error: "Venue event not found" });
+    }
+    updatedVenue.venueImages = venueImages.concat(updatedImages);
+    await updatedVenue.save();
+
+    res.status(200).json({
+      message: "Venue images added successfully",
+      venue: updatedVenue,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while adding venue images" });
+  }
+};
+
+exports.deleteVenueImage = async (req, res, next) => {
+  try {
+    const venueId = req.params.id;
+    const deletedImage = req.body.venueImagePath;
+    const updatedImages = [];
+
+    const updatedVenue = await Venue.findById(venueId);
+    if (!updatedVenue) {
+      return res.status(404).json({ error: "Venue event not found" });
+    }
+
+    updatedImages = updatedVenue.venueImages;
+    updatedImages = updatedImages.filter((path) => {
+      return path !== deletedImage;
+    });
+
+    updatedVenue.venueImages = updatedImages;
+    await updatedVenue.save();
+
+    res.status(200).json({
+      message: "Venue image deleted successfully",
+      venue: updatedVenue,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting venue image" });
   }
 };
 
