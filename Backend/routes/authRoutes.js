@@ -5,7 +5,7 @@ const router=express.Router()
 const authController=require("../controllers/auth")
 const isAuth = require("../middleware/is-auth");
 
-router.post("/login", authController.login);
+router.post("/signin", authController.login);
 
 
 module.exports=router

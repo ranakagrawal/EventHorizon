@@ -3,12 +3,11 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 exports.login = async (req, res, next) => {
-    const email = req.body.email;
-    const password = req.body.password;
+    const { email,password } = req.body;
+
     let loadedUser;
     try {
       const user = await User.findOne({ email: email });
-  
       if (!user) {
         const error = new Error("No user with this email found!");
         error.statusCode = 401;
@@ -33,8 +32,9 @@ exports.login = async (req, res, next) => {
       res.status(200).json({ token: token, userId: loadedUser._id.toString() });
     } catch (err) {
       if (!err.statusCode) {
-        err.statusCode = 500;
+        res.status(500).json({message:"Server Error"});
       }
-      next(err);
+      console.log(err);
+      res.status(err.statusCode).json({message:err.Error});
     }
   };

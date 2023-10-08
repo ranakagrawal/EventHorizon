@@ -1,6 +1,6 @@
 const express=require('express')
 const router=express.Router()
-const loginRoutes=require('./auth')
+const loginRoutes=require('./authRoutes')
 const studentRoutes=require('./studentRoutes')
 const facultyRoutes=require('./facultyRoutes')
 const adminRoutes=require('./adminRoutes')

@@ -5,11 +5,15 @@ const Venue = require("../models/venue");
 const AcademicEvent = require("../models/academicEvent");
 const xlsx = require('xlsx');
 
+
+///////////////////////////////////////////
+//////// **VENUE CRUD** ///////////////////
+///////////////////////////////////////////
 // POST route for creating venue
 exports.createVenue = async (req, res, next) => {
   try {
     const { name, description, capacity } = req.body;
-    const venueImages = req.file.path.replace("\\", "/");
+    const venueImages = req.file.path.split("\\").join("/");
 
     const newVenue = new Venue({
       name,
