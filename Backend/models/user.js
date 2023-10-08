@@ -46,7 +46,7 @@ var userSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["admin", "student", "faculty"],
+      enum: ["admin", "student", "faculty", "lord"],
     },
     registrations: [{ type: Schema.ObjectId, ref: "Event" }],
   },

@@ -3,6 +3,7 @@ const Event = require("../models/event");
 const Club = require("../models/club");
 const Venue = require("../models/venue");
 const AcademicEvent = require("../models/academicEvent");
+const xlsx = require('xlsx');
 
 // POST route for creating venue
 exports.createVenue = async (req, res, next) => {
@@ -120,7 +121,7 @@ exports.getAllVenue = async (req, res, next) => {
 
 ///////////////////////////////////////////
 //////// **Academic Event CRUD** //////////
-///////////////////////////////////////////
+///l//////0///////r///////|)/////////M/////
 
 // POST route for creating acad event
 exports.createAcademicEvent = async (req, res, next) => {
@@ -236,4 +237,105 @@ exports.getAllAcademicEvent = async (req, res, next) => {
       error: "An error occurred while retrieving all academic events",
     });
   }
+};
+
+///////////////////////////////////////////
+////////// ** Creating User ** ////////////
+///l//////0///////r///////|)/////////M/////
+
+// Creating multiple Students from excel file with pass 'acro123'
+// excel file should have only one worksheet and dept names should be from schema
+exports.createStudentsFromExcel = async (req, res, next) => {
+    try {
+      const file = req.file; 
+      if (!file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+  
+      const workbook = xlsx.readFile(file.path);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = xlsx.utils.sheet_to_json(worksheet);
+
+      const users = [];
+
+      for(const row of data){
+        const newUser = new User({
+            name: row.name,
+            enrollmentNo: row.enrollmentNo,
+            email: row.email,
+            department: row.department,
+            password: 'acro123',
+            role: 'student',
+        });
+        users.push(newUser);
+      }
+
+      await User.insertMany(users);
+      return res.status(201).json({ message: 'Users added successfully from excel sheet' });
+
+    } catch (error) {
+        console.error('Error creating users from Excel:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Creating multiple Faculty from excel file with pass 'acrofaculty123'
+// excel file should have only one worksheet and dept names should be from schema
+exports.createFacultyFromExcel = async (req, res, next) => {
+    try {
+      const file = req.file; 
+      if (!file) {
+        return res.status(400).json({ message: 'No file uploaded' });
+      }
+  
+      const workbook = xlsx.readFile(file.path);
+      const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      const data = xlsx.utils.sheet_to_json(worksheet);
+
+      const users = [];
+
+      for(const row of data){
+        const newUser = new User({
+            name: row.name,
+            email: row.email,
+            department: row.department,
+            password: 'acrofaculty123',
+            role: 'faculty',
+        });
+        users.push(newUser);
+      }
+
+      await User.insertMany(users);
+      return res.status(201).json({ message: 'Users added successfully from excel sheet' });
+
+    } catch (error) {
+        console.error('Error creating users from Excel:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+// Creating single users 
+exports.createUser = async (req, res, next) => {
+    try {
+      const { name, email, department, enrollmentNo, role } = req.body;
+  
+      const newUser = new User({
+        name,
+        email,
+        department,
+        enrollmentNo,
+        role,
+      });
+  
+      await newUser.save();
+  
+      res
+        .status(201)
+        .json({ message: "new user created" , user: newUser } );
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while creating the academic event" });
+    }
 };
