@@ -28,7 +28,7 @@ var userSchema = new Schema(
     department: {
       type: String,
       enum: [
-        "CS",
+        "CSE",
         "IT",
         "CSIT",
         "CS-DS",
