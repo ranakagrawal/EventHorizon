@@ -1,5 +1,9 @@
-//Venue Image Multer
+///////////////////////////////////////////
+//////// **Venue Images Multer** //////////
+///////////////////////////////////////////
 
+// setting multer folder and file name for venue images 
+// with folder name as venue name and file name as date-randomNo.
 exports.venueImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/venueImages/${req.body.name}`;
@@ -11,6 +15,7 @@ exports.venueImageStorage = multer.diskStorage({
   },
 });
 
+//setting up multer for venueiamges route
 exports.venueImageUpload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
@@ -30,16 +35,21 @@ exports.venueImageUpload = multer({
 });
 
 
+////////////////////////////////////////////
+///////// **QR Images Multer** ////////////
+//////////////////////////////////////////
 
-//QR Image Multer
+// setting multer folder and file name for QR images 
+// with folder name as QRImages and file name as User ID.
 
+//*****EDIT REQUIRED******//
 exports.qrImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/qrImages`;
     cb(null, folderName);
   },
   filename: function (req, file, cb) {
-    const uniqueFileName = req.body._id + "-" + Math.round(Math.random() * 1e9); //editing required
+    const uniqueFileName = req.body._id ; //editing required
     cb(null, uniqueFileName + path.extname(file.originalname));
   },
 });
@@ -64,8 +74,11 @@ exports.qrImageUpload = multer({
 
 
 
-///Event Logo, Banner and Report Image Multer
+///////////////////////////////////////////
+//////// **Event Related Multer** /////////
+///////////////////////////////////////////
 
+//Event Logo multer with 'logo' as filename
 exports.eventLogoStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/events/${req.body.name}`;
@@ -75,6 +88,10 @@ exports.eventLogoStorage = multer.diskStorage({
     cb(null, "logo" + path.extname(file.originalname));
   },
 });
+
+// Event banner multer with 'banner' as filename
+//with foldername as event name
+
 exports.eventBannerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/events/${req.body.name}`;
@@ -84,6 +101,10 @@ exports.eventBannerStorage = multer.diskStorage({
     cb(null, "banner" + path.extname(file.originalname));
   },
 });
+
+// multiple event images multer with filename as 'report+$randomValue'
+//with foldername as event name
+
 exports.eventImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/event/${req.body.name}`;
@@ -94,6 +115,9 @@ exports.eventImageStorage = multer.diskStorage({
     cb(null, uniqueFileName + path.extname(file.originalname));
   },
 });
+
+// all event related images uses this same filter
+//with foldername as event name
 
 exports.eventImageUpload = multer({
   storage: storage,
@@ -115,8 +139,8 @@ exports.eventImageUpload = multer({
 
 
 
-//Event Report File Multer
-
+//Event Report File 'pdf' Multer with filename 'reportFile+$randomValue'
+//with foldername as event name
 exports.eventFileStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/event/${req.body.name}`;
@@ -128,6 +152,9 @@ exports.eventFileStorage = multer.diskStorage({
   },
 });
 
+//*****EDIT REQUIRED******//
+
+// event report pdf file multer filter
 exports.venueImageUpload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
