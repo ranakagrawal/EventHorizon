@@ -101,7 +101,7 @@ router.post("/createuser", adminController.createUser);
 router.post("/createclub", adminController.createClub);
 
 // POST route for editing club name by ID
-router.post("/editclub/:id", adminController.editClubName);
+router.post("/editclubname/:id", adminController.editClubName);
 
 // POST route for adding faculty in club using ID
 //ek time pr ek hi

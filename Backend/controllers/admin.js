@@ -548,7 +548,7 @@ exports.addFacultyInClub = async (req, res, next) => {
 exports.deleteFacultyFromClub = async (req, res, next) => {
     try {
       const clubId = req.params.id; // Get club ID from request param
-      const facultyid = req.body;
+      const { facultyid } = req.body;
       const updatedFacultyId = [];
   
       const updatedClub = await Club.findById(clubId);
