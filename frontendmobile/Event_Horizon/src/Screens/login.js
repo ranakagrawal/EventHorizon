@@ -10,28 +10,28 @@ const Data = [
     {
         id: '1',
         name: 'Priyansh Gupta',
-        Email: '0827CS201184',
+        Email: 'priyansh@gmail.com',
         password: 'acro@123',
         year: 'fourth',
     },
     {
         id: '2',
         name: 'Murtaza Bohra',
-        Email: '0827CS201147',
+        Email: 'murtaza@gmail.com',
         password: 'acro@123',
         year: 'second',
     },
     {
         id: '3',
-        name: 'Nirnay Agrawal',
-        Email: '0827CS201158',
+        name: 'Ranak Agrawal',
+        Email: 'ranak@gmail.com',
         password: 'acro@123',
         year: 'first',
     },
     {
-        id: '3',
-        name: 'Rashi Jain',
-        Email: '0827CS201190',
+        id: '4',
+        name: 'Namit Prajapati',
+        Email: 'namit@gmail.com',
         password: 'acro@123',
         year: 'third',
     },
@@ -49,6 +49,10 @@ const Login = ({ route }) => {
 
     const HideButton = () => {
         setHide(!Hide);
+    }
+
+    const goToHome = () => {
+        navigator.navigate('Home');
     }
 
     const HandleSubmit = () => {
@@ -72,7 +76,7 @@ const Login = ({ route }) => {
             if (Email == Data[index].Email) {
                 if (Password == Data[index].password) {
                     alert(`Welcome ${Data[index].name}`);
-                    navigator.navigate(Data[index].year, { userData: Data[index] });
+                    navigator.navigate('Home', { userData: Data[index] });
                 }
                 else {
                     setPResult('Incorrect Password');
