@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const Event = require("../models/event");
 const Club = require("../models/club");
 const Venue = require("../models/venue");
 const AcademicEvent = require("../models/academicEvent");
@@ -9,6 +8,7 @@ const xlsx = require('xlsx');
 ///////////////////////////////////////////
 //////// **VENUE CRUD** ///////////////////
 ///////////////////////////////////////////
+
 // POST route for creating venue
 exports.createVenue = async (req, res, next) => {
   try {
@@ -243,6 +243,43 @@ exports.getAllAcademicEvent = async (req, res, next) => {
   }
 };
 
+// GET route for fetching acad events happening on selected date
+exports.getAcademicEventsOnCurrDate = async (req, res) => {
+    try {
+      const targetDate = new Date(req.params.date); // Get target date from request param
+      if (isNaN(targetDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid date format' });
+      }
+  
+      const academicEvents = await AcademicEvent.find({
+        startDate: { $lte: targetDate }, 
+        endDate: { $gte: targetDate },   
+      });
+  
+      res.status(200).json({ academicEvents });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while fetching academic events' });
+    }
+};
+
+// GET route for fetching acad events happening on or after selected date
+exports.getAcademicEventsOnCurrDate = async (req, res) => {
+    try {
+      const targetDate = new Date(req.params.date); // Get target date from request param
+      if (isNaN(targetDate.getTime())) {
+        return res.status(400).json({ error: 'Invalid date format' });
+      }
+  
+      const academicEvents = await AcademicEvent.find({ startDate: { $gte: targetDate } });
+  
+      res.status(200).json({ academicEvents });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while fetching academic events' });
+    }
+};
+
 ///////////////////////////////////////////
 ////////// ** Creating User ** ////////////
 ///l//////0///////r///////|)/////////M/////
@@ -343,3 +380,127 @@ exports.createUser = async (req, res, next) => {
         .json({ error: "An error occurred while creating the academic event" });
     }
 };
+
+///////////////////////////////////////////
+//////////// ***Club CRUD*** //////////////
+///l//////0///////r///////|)/////////M/////
+
+// POST route for creating a Club
+exports.createClub = async (req, res, next) => {
+    try {
+      const { name, facultyEmail } = req.body;
+
+      const faculty = await User.findOne({ email: facultyEmail});
+
+      if(!faculty){
+        return res.status(404).json({ error: "Faculty not found"});
+      }
+
+      const newClub = new Club({
+        name,
+        facultyId: [faculty._id],
+      });
+  
+      await newClub.save();
+  
+      res
+        .status(201)
+        .json({ message: "Club created successfully by Admin" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while creating the Club" });
+    }
+  };
+  
+  // POST route for editing acad event by ID
+  exports.editAcademicEvent = async (req, res, next) => {
+    try {
+      const academicEventId = req.params.id; // Get acad event ID from request param
+      const { name, startDate, endDate, targetedDept } = req.body;
+  
+      const targetedDeptArray = targetedDept.split(",");
+  
+      const updatedAcademicEvent = await AcademicEvent.findByIdAndUpdate(
+        academicEventId,
+        {
+          name,
+          startDate,
+          endDate,
+          targetedDept: targetedDeptArray,
+        },
+        { new: true }
+      );
+  
+      if (!updatedAcademicEvent) {
+        return res.status(404).json({ error: "Academic event not found" });
+      }
+  
+      res.status(200).json({
+        message: "Academic event updated successfully",
+        academicEvent: updatedAcademicEvent,
+      });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while updating the academic event" });
+    }
+  };
+  
+  // DELETE route for deleting acad event by ID
+  exports.deleteAcademicEvent = async (req, res, next) => {
+    try {
+      const academicEventId = req.params.id; // Get acad event ID from request param
+  
+      const deletedAcademicEvent = await AcademicEvent.findByIdAndDelete(
+        academicEventId
+      );
+  
+      if (!deletedAcademicEvent) {
+        return res.status(404).json({ error: "Academic event not found" });
+      }
+  
+      res.status(200).json({ message: "Academic event deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while deleting the academic event" });
+    }
+  };
+  
+  // GET route for fetching acad events using ID
+  exports.getAcademicEventById = async (req, res, next) => {
+    try {
+      const academicEventId = req.params.id; //get academic event ID from request param
+  
+      const academicEvent = await AcademicEvent.findById(academicEventId);
+  
+      if (!academicEvent) {
+        return res.status(404).json({ error: "Academic event not found" });
+      }
+  
+      res.status(200).json({ academicEvent });
+    } catch (error) {
+      console.error(error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while retrieving the academic event" });
+    }
+  };
+  
+  // GET route for getting all of the academic events
+  exports.getAllAcademicEvent = async (req, res, next) => {
+    try {
+      const academicEvents = await AcademicEvent.find();
+  
+      res.status(200).json({ academicEvents });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        error: "An error occurred while retrieving all academic events",
+      });
+    }
+  };
