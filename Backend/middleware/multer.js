@@ -2,7 +2,7 @@
 //////// **Venue Images Multer** //////////
 ///////////////////////////////////////////
 
-// setting multer folder and file name for venue images 
+// setting multer folder and file name for venue images
 // with folder name as venue name and file name as date-randomNo.
 exports.venueImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -15,31 +15,11 @@ exports.venueImageStorage = multer.diskStorage({
   },
 });
 
-//setting up multer for venueiamges route
-exports.venueImageUpload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-      return cb(
-        res
-          .status(404)
-          .json({ message: "Only .png, .jpg or .jpeg formats are supported" })
-      );
-    }
-    cb(null, true);
-  },
-  limits: {
-    //fileSize: 1024 * 1024
-  },
-});
-
-
 ////////////////////////////////////////////
 ///////// **QR Images Multer** ////////////
 //////////////////////////////////////////
 
-// setting multer folder and file name for QR images 
+// setting multer folder and file name for QR images
 // with folder name as QRImages and file name as User ID.
 
 //*****EDIT REQUIRED******//
@@ -49,30 +29,10 @@ exports.qrImageStorage = multer.diskStorage({
     cb(null, folderName);
   },
   filename: function (req, file, cb) {
-    const uniqueFileName = req.body._id ; //editing required
+    const uniqueFileName = req.body._id; //editing required
     cb(null, uniqueFileName + path.extname(file.originalname));
   },
 });
-
-exports.qrImageUpload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-      return cb(
-        res
-          .status(404)
-          .json({ message: "Only .png, .jpg or .jpeg formats are supported" })
-      );
-    }
-    cb(null, true);
-  },
-  limits: {
-    //fileSize: 1024 * 1024
-  },
-});
-
-
 
 ///////////////////////////////////////////
 //////// **Event Related Multer** /////////
@@ -105,7 +65,7 @@ exports.eventBannerStorage = multer.diskStorage({
 // multiple event images multer with filename as 'report+$randomValue'
 //with foldername as event name
 
-exports.eventImageStorage = multer.diskStorage({
+exports.eventReportImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/event/${req.body.name}`;
     cb(null, folderName);
@@ -115,29 +75,6 @@ exports.eventImageStorage = multer.diskStorage({
     cb(null, uniqueFileName + path.extname(file.originalname));
   },
 });
-
-// all event related images uses this same filter
-//with foldername as event name
-
-exports.eventImageUpload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-      return cb(
-        res
-          .status(404)
-          .json({ message: "Only .png, .jpg or .jpeg formats are supported" })
-      );
-    }
-    cb(null, true);
-  },
-  limits: {
-    //fileSize: 1024 * 1024
-  },
-});
-
-
 
 //Event Report File 'pdf' Multer with filename 'reportFile+$randomValue'
 //with foldername as event name
@@ -152,23 +89,34 @@ exports.eventFileStorage = multer.diskStorage({
   },
 });
 
-//*****EDIT REQUIRED******//
+///////////////////////////////////////////
+//////// **Multer File Filters** //////////
+///////////////////////////////////////////
+
+// all images uses this same filter
+
+exports.imageFileFilter = function (req, file, cb) {
+  var ext = path.extname(file.originalname);
+  if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
+    return cb(
+      res
+        .status(404)
+        .json({ message: "Only .png, .jpg or .jpeg formats are supported" })
+    );
+  }
+  cb(null, true);
+};
+
 
 // event report pdf file multer filter
-exports.venueImageUpload = multer({
-  storage: storage,
-  fileFilter: function (req, file, cb) {
-    var ext = path.extname(file.originalname);
-    if (ext !== ".pdf" && ext !== ".doc" && ext !== ".docx") {
-      return cb(
-        res
-          .status(404)
-          .json({ message: "Only .pdf, .doc or .docx formats are supported" })
-      );
-    }
-    cb(null, true);
-  },
-  limits: {
-    //fileSize: 1024 * 1024
-  },
-});
+exports.pdfFileFilter = function (req, file, cb) {
+  var ext = path.extname(file.originalname);
+  if (ext !== ".pdf" && ext !== ".doc" && ext !== ".docx") {
+    return cb(
+      res
+        .status(404)
+        .json({ message: "Only .pdf, .doc or .docx formats are supported" })
+    );
+  }
+  cb(null, true);
+};
