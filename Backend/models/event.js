@@ -12,6 +12,7 @@ var eventSchema = new Schema(
       type: String,
       trim: true,
     },
+    targetedDept: [{ type: String }],
     banner: {
       type: String,
       trim: true,
@@ -47,6 +48,7 @@ var eventSchema = new Schema(
       enum: ["requested", "rejected", "upcoming", "completed"],
     },
     registrations: [{ type: Schema.ObjectId, ref: "User" }],
+    attendees: [{ type: Schema.ObjectId, ref: "User" }],
     broadcast: [{ type: String }],
   },
   { timestamps: true }
