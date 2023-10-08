@@ -324,7 +324,7 @@ exports.getAcademicEventsOnCurrDate = async (req, res) => {
 };
 
 // GET route for fetching acad events happening on or after selected date
-exports.getAcademicEventsOnCurrDate = async (req, res) => {
+exports.getAcademicEventsAfterDate = async (req, res) => {
   try {
     const targetDate = new Date(req.params.date); // Get target date from request param
     if (isNaN(targetDate.getTime())) {
@@ -376,6 +376,7 @@ exports.createStudentsFromExcel = async (req, res, next) => {
     }
 
     await User.insertMany(users);
+
     return res
       .status(201)
       .json({ message: "Users added successfully from excel sheet" });
