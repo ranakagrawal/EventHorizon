@@ -110,7 +110,6 @@ exports.imageFileFilter = function (req, file, cb) {
   cb(null, true);
 };
 
-
 // event report pdf file multer filter
 exports.pdfFileFilter = function (req, file, cb) {
   var ext = path.extname(file.originalname);
@@ -123,3 +122,52 @@ exports.pdfFileFilter = function (req, file, cb) {
   }
   cb(null, true);
 };
+
+// event user xlsx file multer filter
+exports.xlsxFilter = function (req, file, cb) {
+  var ext = path.extname(file.originalname);
+  if (
+    ext !== ".xlsx" &&
+    ext !== ".xlsm" &&
+    ext !== ".xlsb" &&
+    ext !== ".xltx" &&
+    ext !== ".xls" &&
+    ext !== ".xlt"
+  ) {
+    return cb(
+      res.status(404).json({
+        message:
+          "Only .xlsx .xlsm .xlsb .xltx .xlsa and .xlt formats are supported",
+      })
+    );
+  }
+  cb(null, true);
+};
+
+///////////////////////////////////////////
+//////// **Multer Excel Filters** /////////
+///////////////////////////////////////////
+
+exports.studentExcelStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const folderName = `assets/excel/student`;
+    cb(null, folderName);
+  },
+  filename: function (req, file, cb) {
+    const uniqueFileName =
+      "std" + "-" + Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueFileName + path.extname(file.originalname));
+  },
+});
+
+exports.facultyExcelStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const folderName = `assets/excel/faculty`;
+    cb(null, folderName);
+  },
+  filename: function (req, file, cb) {
+    const uniqueFileName =
+      "fty" + "-" + Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueFileName + path.extname(file.originalname));
+  },
+});
