@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const adminController = require("../controllers/admin");
 const multer = require("multer");
+
+
+const adminController = require("../controllers/admin");
 
 // const storage = multer.diskStorage({
 //   destination: function (req, file, cb) {
