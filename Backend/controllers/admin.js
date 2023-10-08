@@ -28,22 +28,56 @@ exports.createVenue = async (req, res, next) => {
   }
 };
 
+
+//       Academic Event CRUD
+
 exports.createAcademicEvent = async (req, res, next) => {
     try {
         const { name, startDate, endDate, targetedDept } = req.body;
-        const targetedDeptArray = targetedDept.split(',');
+
         const newAcademicEvent = new AcademicEvent({
         name,
         startDate,
         endDate,
-        targetedDept: targetedDeptArray,
+        targetedDept,
         });
 
         await newAcademicEvent.save();
 
-        res.status(201).json({ message: 'Academic event created successfully by Admin',event: newAcademicEvent});
+        res.status(201).json({ message: 'Academic event created successfully by Admin'});
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'An error occurred while creating the academic event' });
     }
 };
+
+exports.editAcademicEvent = async (req, res) => {
+    try {
+      const academicEventId = req.params.id; // Get acad event ID from request param
+      const { name, startDate, endDate, targetedDept } = req.body;
+  
+      const targetedDeptArray = targetedDept.split(',');
+  
+      const updatedAcademicEvent = await AcademicEvent.findByIdAndUpdate(
+        academicEventId,
+        {
+          name,
+          startDate,
+          endDate,
+          targetedDept: targetedDeptArray,
+        },
+        { new: true } 
+      );
+  
+      if (!updatedAcademicEvent) {
+        return res.status(404).json({ error: 'Academic event not found' });
+      }
+  
+      res.status(200).json({ message: 'Academic event updated successfully', academicEvent: updatedAcademicEvent });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'An error occurred while updating the academic event' });
+    }
+};
+
+
