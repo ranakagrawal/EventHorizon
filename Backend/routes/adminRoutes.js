@@ -4,7 +4,7 @@ const multer = require("multer");
 
 const multerFunctions = require("../middleware/multer");
 
-const uploadVenueImages = multer({ storage: multerFunctions.venueImageStorage, fileFilter: multerFunctions.imageFileFilter }).single("image")
+const uploadVenueImages = multer({ storage: multerFunctions.venueImageStorage, fileFilter: multerFunctions.imageFileFilter }).array("image")
 
 const adminController = require("../controllers/admin");
 ///////////////////////////////////////////

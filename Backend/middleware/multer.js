@@ -1,4 +1,5 @@
 const multer = require("multer");
+const fs = require("fs");
 const path = require("path");
 
 ///////////////////////////////////////////
@@ -10,6 +11,10 @@ const path = require("path");
 exports.venueImageStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const folderName = `assets/venueImages/${req.body.name}`;
+    if(!fs.existsSync(folderName)){
+      fs.mkdirSync(folderName);
+    }
+    
     cb(null, folderName);
   },
   filename: function (req, file, cb) {
