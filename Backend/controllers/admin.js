@@ -332,7 +332,7 @@ exports.getAcademicEventsAfterDate = async (req, res) => {
     }
 
     const academicEvents = await AcademicEvent.find({
-      startDate: { $gte: targetDate },
+      endDate: { $gte: targetDate },
     });
 
     res.status(200).json({ academicEvents });
