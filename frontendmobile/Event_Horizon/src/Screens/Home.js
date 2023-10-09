@@ -1,9 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, DrawerLayoutAndroid } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../Stylesheet/stylesheet';
-import NavBar from '../Components/navbar';
 
 const Home = () => {
     const navigator = useNavigation();
@@ -28,20 +27,22 @@ const Home = () => {
 
     return (
         <View style={styles.AppBg}>
-            <NavBar />
+
             {/* <Text style={styles.TextStyle}>Hello World!</Text> */}
             <Calendar
                 enableSwipeMonths
                 style={{
-                    borderWidth: 1,
+                    borderWidth: 2,
                     borderColor: 'gray',
                     margin: '2%',
+                    borderRadius: 5,
                 }}
                 onDayPress={handleDayPress}
                 markedDates={{
                     // Marked dates logic here
                 }}
             />
+            <Text style={styles.TextStyle}>Today's Event</Text>
         </View>
     );
 };

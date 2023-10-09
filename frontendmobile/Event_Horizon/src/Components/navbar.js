@@ -1,23 +1,34 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, Dimensions, StyleSheet, Image } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+import { useNavigation } from '@react-navigation/native';
 
 let mobileW = Dimensions.get('window').width;
 
 const NavBar = ({ }) => {
+
+    const navigator = useNavigation();
+
     return (
         <View style={styles.container}>
             <Image
                 source={require('./../../assets/Logo/ehwhite.png')}
                 style={{ width: mobileW * 0.14, resizeMode: 'contain', }}
             />
-            <Text style={styles.title}>EVENT HORIZON</Text>
+            <TouchableOpacity onPress={() => {
+                navigator.reset({
+                    index: 0,
+                    routes: [{ name: 'Home' }],
+                });
+            }}>
+                <Text style={styles.title}>EVENT HORIZON</Text>
+            </TouchableOpacity>
             <View style={{ alignItems: 'flex-end', flex: 1 }}>
                 <View style={{ alignItems: 'flex-end', flexDirection: 'row', marginHorizontal: '3%', alignContent: 'space-between' }}>
-                    <TouchableOpacity onPress={{}}>
+                    <TouchableOpacity onPress={() => { }}>
                         <MaterialIcons name='notifications' size={25} color="white" />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={{}}>
+                    <TouchableOpacity onPress={() => { }}>
                         <MaterialIcons name='person-outline' size={25} color="white" />
                     </TouchableOpacity>
                 </View>
