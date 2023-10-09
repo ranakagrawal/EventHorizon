@@ -556,3 +556,6 @@ exports.getAllClub = async (req, res, next) => {
     });
   }
 };
+
+//create approve event function
+//show all reuested events
