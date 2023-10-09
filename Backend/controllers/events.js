@@ -18,7 +18,16 @@ exports.createEvent = async (req, res, next) => {
         venueImages.push(logoPath,bannerPath);
 
         const targetedDeptArray = targetedDept.split(",");
-    
+
+        const startD = new Date(startDate)
+        startD.setHours(0,0,0,0)
+
+        const endD = new Date(endDate)
+        endD.setHours(23,59,59)
+
+        const deadD = new Date(registrationDeadline)
+        deadD.setHours(23,59,59)
+        
         const newEvent = new Event({
           name: name,
           description: description,
@@ -28,9 +37,9 @@ exports.createEvent = async (req, res, next) => {
           venueId: venueId,
           clubId: clubId,
           facultyId: facultyId,
-          registrationDeadline: registrationDeadline,
-          startDate: startDate,
-          endDate: endDate,
+          registrationDeadline: deadD,
+          startDate: startD,
+          endDate: endD,
           status: "requested",
         });
     
