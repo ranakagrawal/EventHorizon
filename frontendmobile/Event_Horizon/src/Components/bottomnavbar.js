@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 
 let mobileW = Dimensions.get('window').width;
 
-const BNavBar = ({ }) => {
+const BNavBar = ({ onPress }) => {
 
     const navigator = useNavigation();
 
@@ -13,7 +13,7 @@ const BNavBar = ({ }) => {
         <View style={{ backgroundColor: 'white' }}>
             {/* <View style={[styles.container, { backgroundColor: 'rgba(255,255,255,0)' }]}></View> */}
             <View style={styles.container}></View>
-            <TouchableHighlight style={styles.flottingbutton} onPress={() => { }}>
+            <TouchableHighlight style={styles.flottingbutton} onPress={onPress}>
                 <MaterialIcons name='menu' size={25} color="white" style={{}} />
             </TouchableHighlight>
 

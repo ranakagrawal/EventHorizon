@@ -5,15 +5,18 @@ import { useNavigation } from '@react-navigation/native';
 
 let mobileW = Dimensions.get('window').width;
 
-const NavBar = ({ }) => {
+const NavBar = ({ onPress }) => {
 
     const navigator = useNavigation();
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={onPress}>
+                <MaterialIcons name='menu' size={25} color="white" style={{ marginRight: "18%" }} />
+            </TouchableOpacity>
             <Image
                 source={require('./../../assets/Logo/ehwhite.png')}
-                style={{ width: mobileW * 0.14, resizeMode: 'contain', }}
+                style={{ width: mobileW * 0.12, resizeMode: 'contain' }}
             />
             <TouchableOpacity onPress={() => {
                 navigator.reset({
@@ -28,6 +31,7 @@ const NavBar = ({ }) => {
                     <TouchableOpacity onPress={() => { }}>
                         <MaterialIcons name='notifications' size={25} color="white" />
                     </TouchableOpacity>
+                    <View style={{ marginHorizontal: '3.5%' }}></View>
                     <TouchableOpacity onPress={() => { }}>
                         <MaterialIcons name='person-outline' size={25} color="white" />
                     </TouchableOpacity>
@@ -54,7 +58,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
-        paddingLeft: "2%"
+        // paddingLeft: "2%"
     },
 });
 

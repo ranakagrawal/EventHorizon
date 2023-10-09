@@ -12,13 +12,7 @@ const styles = StyleSheet.create({
         color: 'black',
         fontSize: 24,
     },
-    eventItem: {
-        // padding: 10,
-        borderBottomWidth: 1,
-        // borderWidth: 1,
-        borderColor: '#ddd',
-        padding: 7
-    },
+    
     emptyDate: {
         alignContent: 'center',
         alignSelf: 'center'

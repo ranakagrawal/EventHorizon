@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import { CalendarProvider, Agenda } from 'react-native-calendars';
 import styles from '../Stylesheet/stylesheet';
+import EventStyles from '../Stylesheet/eventpagestyle';
 
 const EHome = ({ route }) => {
     const [selectedDate, setSelectedDate] = useState(route.params.date);
@@ -58,10 +59,10 @@ const EHome = ({ route }) => {
                 onDayPress={(day) => { setSelectedDate(day.dateString) }}
                 selected={selectedDate}
                 renderItem={(item) => (
-                    <View style={styles.eventItem}>
-                        <Text style={styles.TextStyle}>{item.title}</Text>
-                        <Text style={styles.TextStyle}>{item.description}</Text>
-                        <Text style={styles.TextStyle}>{item.startTime} - {item.endTime}</Text>
+                    <View style={EventStyles.eventItem}>
+                        <Text style={EventStyles.TitleTextStyle}>{item.title}</Text>
+                        <Text style={EventStyles.DesTextStyle}>{item.description}</Text>
+                        <Text style={EventStyles.TimeTextStyle}>{item.startTime} - {item.endTime}</Text>
                     </View>
                 )}
                 rowHasChanged={(r1, r2) => r1 !== r2}
