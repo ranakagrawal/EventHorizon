@@ -7,19 +7,6 @@ const StudentAccess = require("../models/studentAccess");
 // provide student access
 // get students who have access
 // edit access
-// club i am part of 
-// events organized by my club
-
-const User = require("../models/user");
-const Event = require("../models/event");
-const Club = require("../models/club");
-const Venue = require("../models/venue");
-const StudentAccess = require("../models/studentAccess");
-const { access } = require("fs");
-
-// provide student access
-// get students who have access
-// edit access
 // club i am part of
 // events organized by my club
 
@@ -126,4 +113,26 @@ exports.getFacultyClubs = async (req, res, next) => {
     } catch (err) {
       res.status(500).json({ message: "Server error!" });
     }
+};
+
+exports.facultyClub = async (req, res, next) => {
+    try {
+      const { facultyId } = req.params;
+  
+      const clubs = await Club.find({ facultyId: facultyId }).populate(
+        "organizedEvents"
+      );
+  
+      if (!clubs || clubs.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "No clubs found for the given facultyId" });
+      }
+  
+      res.status(200).json(clubs);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Server Error" });
+    }
   };
+  
