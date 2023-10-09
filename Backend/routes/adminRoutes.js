@@ -83,7 +83,6 @@ router.get("/check-availability", venueController.checkVenueAvailability);
 // GET route for getting all of the dates on which a venue is booked using venueId in req param
 router.get("/getbooked-dates/:venueId", venueController.getAllVenue);
 
-module.exports = router;
 
 
 ///////////////////////////////////////////
@@ -128,3 +127,10 @@ router.get("/getclubbyid/:id", adminController.getClubById);
 
 // GET route for getting all of the clubs
 router.get("/getallclub", adminController.getAllClub);
+
+
+
+
+
+
+module.exports = router;
