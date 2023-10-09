@@ -104,7 +104,7 @@ exports.getClubsOfFaculty = async (req, res, next) => {
       for (let facid of facultys) {
         if (facid.toString() === id) {
           facultyClubs.push(club);
-          console.log(facultyClubs);
+          // console.log(facultyClubs);
         }
       }
     });

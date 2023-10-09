@@ -76,3 +76,33 @@ exports.getAcademicEventsAfterDate = async (req, res) => {
         .json({ error: "An error occurred while fetching academic events" });
     }
 };
+
+// GET route to get all of the academic events targeted to a particular department
+exports.getAcademicEventByDept = async (req, res) => {
+  try {
+    const targetedDepartment = req.params.department; //get department from request param
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const acadEvents = await AcademicEvent.find({
+      endDate: { $gte: today },
+    });
+
+    let acadEventByDept = [];
+
+    acadEvents.forEach((event) => {
+      let departments = event.targetedDept;
+      for (let eve of departments) {
+        if (eve === targetedDepartment) {
+          acadEventByDept.push(event);
+          // console.log(acadEventByDept);
+        }
+      }
+    });
+    res.status(200).json({ acadEventByDept });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the academic event by deartment" });
+  }
+};

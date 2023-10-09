@@ -22,12 +22,15 @@ const uploadFacultyExcel = multer({
 const uploadlogobanner = multer({
   storage: multerFunctions.eventLogoBannerStorage,
   fileFilter: multerFunctions.imageFileFilter,
-}).fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }]);
+}).fields([
+  { name: "logo", maxCount: 1 },
+  { name: "banner", maxCount: 1 },
+]);
 
 const adminController = require("../controllers/admin");
 const venueController = require("../controllers/venue");
 const academicEventsController = require("../controllers/academicEvents");
-const eventController = require("../controllers/events")
+const eventController = require("../controllers/events");
 ///////////////////////////////////////////
 //////// **Academic Event CRUD** //////////
 ///////////////////////////////////////////
@@ -53,6 +56,12 @@ router.get(
 router.get(
   "/acadeventafterdate/:date",
   academicEventsController.getAcademicEventsAfterDate
+);
+
+// GET route to get all of the academic events targeted to a particular department
+router.get(
+  "/academiceventbydept/:department",
+  academicEventsController.getAcademicEventByDept
 );
 
 // GET route for getting all of the academic events
@@ -159,10 +168,10 @@ router.post("/approve", adminController.approveEvent);
 router.post("/reject", adminController.declineEvent);
 
 ///////////////////////////////////////////
-////////////*Event Controllers*//////////////
+///////////*Events Controller*/////////////
 ///l//////0///////r///////|)/////////M/////
 
-// POST route to create an event 
-router.post("/createevent",uploadlogobanner, eventController.createEvent);
+// POST route to create an event
+router.post("/createevent", uploadlogobanner, eventController.createEvent);
 
 module.exports = router;

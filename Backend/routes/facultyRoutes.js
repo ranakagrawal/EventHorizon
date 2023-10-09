@@ -48,6 +48,12 @@ router.get(
   academicEventsController.getAcademicEventsAfterDate
 );
 
+// GET route to get all of the academic events targeted to a particular department
+router.get(
+  "/academiceventbydept/:department",
+  academicEventsController.getAcademicEventByDept
+);
+
 // GET route for getting all of the academic events
 router.get("/getallacadevent", academicEventsController.getAllAcademicEvent);
 
@@ -73,10 +79,9 @@ router.post("/editstudentaccess", facultyController.editStudentAccess);
 //I have changed func name change that name in route
 router.get("/eventsbyclub/:id", facultyController.getEventsByClub);
 
-
-
-
-
+///////////////////////////////////////////
+///////////*Events Controller*/////////////
+///l//////0///////r///////|)/////////M/////
 
 // POST route to create an event 
 router.post("/createevent",uploadlogobanner, eventController.createEvent);
