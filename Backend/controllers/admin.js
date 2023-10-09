@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Club = require("../models/club");
 const Venue = require("../models/venue");
 const AcademicEvent = require("../models/academicEvent");
+const bcrypt = require("bcryptjs");
 const xlsx = require("xlsx");
 
 ///////////////////////////////////////////
@@ -16,6 +17,11 @@ exports.createVenue = async (req, res, next) => {
     req.files.map((file) => {
       venueImages.push(file.path.split("\\").join("/"));
     });
+
+    const venue = await Venue.findOne({name: name});
+    if(venue){
+        return res.status(403).json({ error: "Venue name already exists" });
+    }
 
     const newVenue = new Venue({
       name,
@@ -147,40 +153,6 @@ exports.deleteVenue = async (req, res, next) => {
   }
 };
 
-// GET route for fetching venue using ID
-exports.getVenueById = async (req, res, next) => {
-  try {
-    const venueId = req.params.id; //get academic event ID from request param
-
-    const venue = await Venue.findById(venueId);
-
-    if (!venue) {
-      return res.status(404).json({ error: "Venue not found" });
-    }
-
-    res.status(200).json({ venue });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while retrieving the venue" });
-  }
-};
-
-// GET route for getting all of the venue
-exports.getAllVenue = async (req, res, next) => {
-  try {
-    const venues = await Venue.find();
-
-    res.status(200).json({ venues });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "An error occurred while retrieving all venues",
-    });
-  }
-};
-
 ///////////////////////////////////////////
 //////// **Academic Event CRUD** //////////
 ///l//////0///////r///////|)/////////M/////
@@ -267,83 +239,6 @@ exports.deleteAcademicEvent = async (req, res, next) => {
   }
 };
 
-// GET route for fetching acad events using ID
-exports.getAcademicEventById = async (req, res, next) => {
-  try {
-    const academicEventId = req.params.id; //get academic event ID from request param
-
-    const academicEvent = await AcademicEvent.findById(academicEventId);
-
-    if (!academicEvent) {
-      return res.status(404).json({ error: "Academic event not found" });
-    }
-
-    res.status(200).json({ academicEvent });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while retrieving the academic event" });
-  }
-};
-
-// GET route for getting all of the academic events
-exports.getAllAcademicEvent = async (req, res, next) => {
-  try {
-    const academicEvents = await AcademicEvent.find();
-
-    res.status(200).json({ academicEvents });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      error: "An error occurred while retrieving all academic events",
-    });
-  }
-};
-
-// GET route for fetching acad events happening on selected date
-exports.getAcademicEventsOnCurrDate = async (req, res) => {
-  try {
-    const targetDate = new Date(req.params.date); // Get target date from request param
-    if (isNaN(targetDate.getTime())) {
-      return res.status(400).json({ error: "Invalid date format" });
-    }
-
-    const academicEvents = await AcademicEvent.find({
-      startDate: { $lte: targetDate },
-      endDate: { $gte: targetDate },
-    });
-
-    res.status(200).json({ academicEvents });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching academic events" });
-  }
-};
-
-// GET route for fetching acad events happening on or after selected date
-exports.getAcademicEventsAfterDate = async (req, res) => {
-  try {
-    const targetDate = new Date(req.params.date); // Get target date from request param
-    if (isNaN(targetDate.getTime())) {
-      return res.status(400).json({ error: "Invalid date format" });
-    }
-
-    const academicEvents = await AcademicEvent.find({
-      endDate: { $gte: targetDate },
-    });
-
-    res.status(200).json({ academicEvents });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while fetching academic events" });
-  }
-};
-
 ///////////////////////////////////////////
 ////////// ** Creating User ** ////////////
 ///l//////0///////r///////|)/////////M/////
@@ -360,7 +255,8 @@ exports.createStudentsFromExcel = async (req, res, next) => {
     const workbook = xlsx.readFile(file.path);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(worksheet);
-
+    const pass = "acro123";
+    const hashedPassword = await bcrypt.hash(pass, 10);
     const users = [];
 
     for (const row of data) {
@@ -369,7 +265,7 @@ exports.createStudentsFromExcel = async (req, res, next) => {
         enrollmentNo: row.enrollmentNo,
         email: row.email,
         department: row.department,
-        password: "acro123",
+        password: hashedPassword,
         role: "student",
       });
       users.push(newUser);
@@ -398,7 +294,8 @@ exports.createFacultyFromExcel = async (req, res, next) => {
     const workbook = xlsx.readFile(file.path);
     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
     const data = xlsx.utils.sheet_to_json(worksheet);
-
+    const pass = "acrofaculty123";
+    const hashedPassword = await bcrypt.hash(pass, 10);
     const users = [];
 
     for (const row of data) {
@@ -406,7 +303,7 @@ exports.createFacultyFromExcel = async (req, res, next) => {
         name: row.name,
         email: row.email,
         department: row.department,
-        password: "acrofaculty123",
+        password: hashedPassword,
         role: "faculty",
       });
       users.push(newUser);
@@ -425,11 +322,12 @@ exports.createFacultyFromExcel = async (req, res, next) => {
 // Creating single users
 exports.createUser = async (req, res, next) => {
   try {
-    const { name, email, department, enrollmentNo, role } = req.body;
-
+    const { name, email, password, department, enrollmentNo, role } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({
       name,
       email,
+      password: hashedPassword,
       department,
       enrollmentNo,
       role,

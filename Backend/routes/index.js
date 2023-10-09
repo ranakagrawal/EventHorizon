@@ -4,6 +4,7 @@ const loginRoutes=require('./authRoutes')
 const studentRoutes=require('./studentRoutes')
 const facultyRoutes=require('./facultyRoutes')
 const adminRoutes=require('./adminRoutes')
+const changePasswordRoute = require('./changePassRoute')
 
 const Routes=[
     {
@@ -21,6 +22,10 @@ const Routes=[
     {
         path:'/admin',
         route:adminRoutes
+    },
+    {
+        path:'/changepassword',
+        route:changePasswordRoute
     },
 ]
 

@@ -20,6 +20,8 @@ const uploadFacultyExcel = multer({
 }).single("facultyexcel");
 
 const adminController = require("../controllers/admin");
+const venueController = require("../controllers/venue");
+const academicEventsController = require("../controllers/academicEvents");
 ///////////////////////////////////////////
 //////// **Academic Event CRUD** //////////
 ///////////////////////////////////////////
@@ -33,16 +35,16 @@ router.post("/editacadevent/:id", adminController.editAcademicEvent);
 router.post("/deleteacadevent/:id", adminController.deleteAcademicEvent);
 
 // GET route for fetching acad events using ID
-router.get("/getacadevent/:id", adminController.getAcademicEventById);
+router.get("/getacadevent/:id", academicEventsController.getAcademicEventById);
 
 // GET route for fetching acad events happening on selected date
-router.get("/acadeventcurrdate/:date", adminController.getAcademicEventsOnCurrDate);
+router.get("/acadeventcurrdate/:date", academicEventsController.getAcademicEventsOnCurrDate);
 
 // GET route for fetching acad events happening on or after selected date
-router.get("/acadeventafterdate/:date", adminController.getAcademicEventsAfterDate);
+router.get("/acadeventafterdate/:date", academicEventsController.getAcademicEventsAfterDate);
 
 // GET route for getting all of the academic events
-router.get("/getallacadevent", adminController.getAllAcademicEvent);
+router.get("/getallacadevent", academicEventsController.getAllAcademicEvent);
 
 ///////////////////////////////////////////
 //////// **VENUE CRUD** ///////////////////
@@ -69,10 +71,17 @@ router.post("/editvenue/:id", adminController.editVenue);
 router.post("/deletevenue/:id", adminController.deleteVenue);
 
 // GET route for fetching acad events using ID
-router.get("/getvenue/:id", adminController.getVenueById);
+router.get("/getvenue/:id", venueController.getVenueById);
 
 // GET route for getting all of the academic events
-router.get("/getallvenue", adminController.getAllVenue);
+router.get("/getallvenue", venueController.getAllVenue);
+
+// GET route for checking if venue is available for a particular date or not
+// It uses venueId, date in request body
+router.get("/check-availability", venueController.checkVenueAvailability);
+
+// GET route for getting all of the dates on which a venue is booked using venueId in req param
+router.get("/getbooked-dates/:venueId", venueController.getAllVenue);
 
 module.exports = router;
 
