@@ -38,10 +38,16 @@ router.post("/deleteacadevent/:id", adminController.deleteAcademicEvent);
 router.get("/getacadevent/:id", academicEventsController.getAcademicEventById);
 
 // GET route for fetching acad events happening on selected date
-router.get("/acadeventcurrdate/:date", academicEventsController.getAcademicEventsOnCurrDate);
+router.get(
+  "/acadeventcurrdate/:date",
+  academicEventsController.getAcademicEventsOnCurrDate
+);
 
 // GET route for fetching acad events happening on or after selected date
-router.get("/acadeventafterdate/:date", academicEventsController.getAcademicEventsAfterDate);
+router.get(
+  "/acadeventafterdate/:date",
+  academicEventsController.getAcademicEventsAfterDate
+);
 
 // GET route for getting all of the academic events
 router.get("/getallacadevent", academicEventsController.getAllAcademicEvent);
@@ -81,9 +87,7 @@ router.get("/getallvenue", venueController.getAllVenue);
 router.get("/check-availability", venueController.checkVenueAvailability);
 
 // GET route for getting all of the dates on which a venue is booked using venueId in req param
-router.get("/getbooked-dates/:venueId", venueController.getAllVenue);
-
-
+router.get("/getbooked-dates/:venueId", venueController.getBookedDates);
 
 ///////////////////////////////////////////
 ////////// ** Creating User ** ////////////
@@ -91,12 +95,19 @@ router.get("/getbooked-dates/:venueId", venueController.getAllVenue);
 
 // Creating multiple Students from excel file with pass 'acro123'
 // excel file should have only one worksheet and dept names should be from schema
-router.post("/studentexcel", uploadStudentExcel, adminController.createStudentsFromExcel);
-
+router.post(
+  "/studentexcel",
+  uploadStudentExcel,
+  adminController.createStudentsFromExcel
+);
 
 // Creating multiple Faculty from excel file with pass 'acrofaculty123'
 // excel file should have only one worksheet and dept names should be from schema
-router.post("/facultyexcel", uploadFacultyExcel, adminController.createFacultyFromExcel);
+router.post(
+  "/facultyexcel",
+  uploadFacultyExcel,
+  adminController.createFacultyFromExcel
+);
 
 // Creating single users
 router.post("/createuser", adminController.createUser);
@@ -127,10 +138,5 @@ router.get("/getclubbyid/:id", adminController.getClubById);
 
 // GET route for getting all of the clubs
 router.get("/getallclub", adminController.getAllClub);
-
-
-
-
-
 
 module.exports = router;

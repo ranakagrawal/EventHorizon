@@ -12,15 +12,15 @@ const xlsx = require("xlsx");
 // POST route for creating venue
 exports.createVenue = async (req, res, next) => {
   try {
-    const { name, description, capacity } = req.body
+    const { name, description, capacity } = req.body;
     const venueImages = [];
     req.files.map((file) => {
       venueImages.push(file.path.split("\\").join("/"));
     });
 
-    const venue = await Venue.findOne({name: name});
-    if(venue){
-        return res.status(403).json({ error: "Venue name already exists" });
+    const venue = await Venue.findOne({ name: name });
+    if (venue) {
+      return res.status(403).json({ error: "Venue name already exists" });
     }
 
     const newVenue = new Venue({
@@ -52,9 +52,9 @@ exports.editVenue = async (req, res, next) => {
     const updatedVenue = await Venue.findByIdAndUpdate(
       venueId,
       {
-        name,
-        description,
-        capacity,
+        name: name,
+        description: description,
+        capacity: capacity,
       },
       { new: true }
     );
@@ -162,11 +162,13 @@ exports.createAcademicEvent = async (req, res, next) => {
   try {
     const { name, startDate, endDate, targetedDept } = req.body;
 
+    const targetedDeptArray = targetedDept.split(",");
+
     const newAcademicEvent = new AcademicEvent({
       name,
       startDate,
       endDate,
-      targetedDept,
+      targetedDept: targetedDeptArray,
     });
 
     await newAcademicEvent.save();
@@ -259,26 +261,34 @@ exports.createStudentsFromExcel = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(pass, 10);
     const users = [];
 
+    let existingUsers = [];
     for (const row of data) {
-      const newUser = new User({
-        name: row.name,
-        enrollmentNo: row.enrollmentNo,
-        email: row.email,
-        department: row.department,
-        password: hashedPassword,
-        role: "student",
-      });
-      users.push(newUser);
+      const existing = await User.findOne({ email: row.email });
+      if (existing) {
+        existingUsers.push(row.email);
+      } else {
+        const newUser = new User({
+          name: row.name,
+          enrollmentNo: row.enrollmentNo,
+          email: row.email,
+          department: row.department,
+          password: hashedPassword,
+          role: "student",
+        });
+        users.push(newUser);
+      }
     }
-
     await User.insertMany(users);
 
-    return res
-      .status(201)
-      .json({ message: "Users added successfully from excel sheet" });
+    return res.status(201).json({
+      message: "Users added successfully from excel sheet",
+      existingUsers: existingUsers,
+    });
   } catch (error) {
     console.error("Error creating users from Excel:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ message: "Internal server error or the user already exists" });
   }
 };
 
@@ -298,24 +308,34 @@ exports.createFacultyFromExcel = async (req, res, next) => {
     const hashedPassword = await bcrypt.hash(pass, 10);
     const users = [];
 
+    let existingUsers = [];
     for (const row of data) {
-      const newUser = new User({
-        name: row.name,
-        email: row.email,
-        department: row.department,
-        password: hashedPassword,
-        role: "faculty",
-      });
-      users.push(newUser);
+      const existing = await User.findOne({ email: row.email });
+      if (existing) {
+        existingUsers.push(row.email);
+        console.log(existingUsers);
+      } else {
+        const newUser = new User({
+          name: row.name,
+          email: row.email,
+          department: row.department,
+          password: hashedPassword,
+          role: "faculty",
+        });
+        users.push(newUser);
+      }
     }
 
     await User.insertMany(users);
-    return res
-      .status(201)
-      .json({ message: "Users added successfully from excel sheet" });
+    return res.status(201).json({
+      message: "Users added successfully from excel sheet",
+      existingUsers: existingUsers,
+    });
   } catch (error) {
     console.error("Error creating users from Excel:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ message: "Internal server error or the user already exists" });
   }
 };
 
@@ -324,6 +344,13 @@ exports.createUser = async (req, res, next) => {
   try {
     const { name, email, password, department, enrollmentNo, role } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
+    if (role === "admin") {
+      return res.status(403).json({ message: "admin cannot be created!!" });
+    }
+    const user = await User.findOne({ email: email });
+    if (user) {
+      return res.status(403).json({ message: "user already exists!!" });
+    }
     const newUser = new User({
       name,
       email,
@@ -338,9 +365,7 @@ exports.createUser = async (req, res, next) => {
     res.status(201).json({ message: "new user created", user: newUser });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ error: "An error occurred while creating the academic event" });
+    res.status(500).json({ error: "An error occurred while creating user" });
   }
 };
 
@@ -350,180 +375,184 @@ exports.createUser = async (req, res, next) => {
 
 // POST route for creating a Club
 exports.createClub = async (req, res, next) => {
-    try {
-      const { name, facultyEmail } = req.body;
-  
-      const faculty = await User.findOne({ email: facultyEmail });
-  
-      if (!faculty) {
-        return res.status(404).json({ error: "Faculty not found" });
-      }
-  
-      const newClub = new Club({
-        name,
-        facultyId: [faculty._id],
-      });
-  
-      await newClub.save();
-  
-      res.status(201).json({ message: "Club created successfully by Admin" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while creating the Club" });
+  try {
+    const { name, facultyEmail } = req.body;
+
+    const faculty = await User.findOne({
+      email: facultyEmail,
+      role: "faculty",
+    });
+
+    if (!faculty) {
+      return res.status(404).json({ error: "Faculty not found" });
     }
+
+    const newClub = new Club({
+      name,
+      facultyId: [faculty._id],
+    });
+
+    await newClub.save();
+
+    res.status(201).json({ message: "Club created successfully by Admin" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while creating the Club" });
+  }
 };
-  
+
 // POST route for editing club name by ID
 exports.editClubName = async (req, res, next) => {
-    try {
-      const clubId = req.params.id; // Get club ID from request param
-      const { name } = req.body;
-  
-      const updatedClub = await Club.findByIdAndUpdate(
-        clubId,
-        {
-          name,
-        },
-        { new: true }
-      );
-  
-      if (!updatedClub) {
-        return res.status(404).json({ error: "Club not found" });
-      }
-  
-      res.status(200).json({
-        message: "Club name updated successfully",
-        club: updatedClub,
-      });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while updating the club name" });
+  try {
+    const clubId = req.params.id; // Get club ID from request param
+    const { name } = req.body;
+
+    const updatedClub = await Club.findByIdAndUpdate(
+      clubId,
+      {
+        name,
+      },
+      { new: true }
+    );
+
+    if (!updatedClub) {
+      return res.status(404).json({ error: "Club not found" });
     }
+
+    res.status(200).json({
+      message: "Club name updated successfully",
+      club: updatedClub,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while updating the club name" });
+  }
 };
-  
+
 // POST route for adding faculty in club using ID
 //ek time pr ek hi
 exports.addFacultyInClub = async (req, res, next) => {
-    try {
-      const clubId = req.params.id; // Get club ID from request param
-      const { facultyEmail } = req.body;
-  
-      const faculty = await User.findOne({ email: facultyEmail });
-  
-      if (!faculty) {
-        return res.status(404).json({ error: "Faculty not found" });
-      }
-  
-      const updatedClub = await Club.findById(clubId);
-  
-      if (!updatedClub) {
-        return res.status(404).json({ error: "Club not found" });
-      }
-  
-      updatedClub.facultyId.push(faculty._id);
-      await updatedClub.save();
-  
-      res.status(200).json({
-        message: "Successfully added new Faculty member to the Club",
-        club: updatedClub,
-      });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({
-          error: "An error occurred while adding new faculty member to the club!",
-        });
+  try {
+    const clubId = req.params.id; // Get club ID from request param
+    const { facultyEmail } = req.body;
+
+    const faculty = await User.findOne({
+      email: facultyEmail,
+      role: "faculty",
+    });
+
+    if (!faculty) {
+      return res.status(404).json({ error: "Faculty not found" });
     }
+
+    const updatedClub = await Club.findById(clubId);
+
+    if (!updatedClub) {
+      return res.status(404).json({ error: "Club not found" });
+    }
+    if (updatedClub.facultyId.includes(faculty._id)) {
+      return res.status(403).json({ message: "faculty already added!" });
+    }
+    updatedClub.facultyId.push(faculty._id);
+    await updatedClub.save();
+
+    res.status(200).json({
+      message: "Successfully added new Faculty member to the Club",
+      club: updatedClub,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "An error occurred while adding new faculty member to the club!",
+    });
+  }
 };
-  
+
 // DELETE route for deleting faculty from club using facultyID
 //ek time pr ek hi
 exports.deleteFacultyFromClub = async (req, res, next) => {
-    try {
-      const clubId = req.params.id; // Get club ID from request param
-      const { facultyid } = req.body;
-      const updatedFacultyId = [];
-  
-      const updatedClub = await Club.findById(clubId);
-  
-      if (!updatedClub) {
-        return res.status(404).json({ error: "Club not found" });
-      }
-  
-      updatedFacultyId = updatedClub.facultyId;
-      updatedFacultyId = updatedFacultyId.filter((path) => {
-        return path !== facultyid;
-      });
-  
-      updatedClub.facultyId = updatedFacultyId;
-      await updatedClub.save();
-  
-      res.status(200).json({ message: "faculty deleted successfully" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({
-          error: "An error occurred while deleting the faculty from club",
-        });
+  try {
+    const clubId = req.params.id; // Get club ID from request param
+    const { facultyid } = req.body;
+    let updatedFacultyId = [];
+
+    const updatedClub = await Club.findById(clubId);
+
+    if (!updatedClub) {
+      return res.status(404).json({ error: "Club not found" });
     }
+
+    updatedFacultyId = updatedClub.facultyId;
+    updatedFacultyId = updatedFacultyId.filter((path) => {
+      return path.toString() !== facultyid;
+    });
+
+    updatedClub.facultyId = updatedFacultyId;
+    await updatedClub.save();
+
+    res.status(200).json({ message: "faculty deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "An error occurred while deleting the faculty from club",
+    });
+  }
 };
-  
+
 // DELETE route for deleting entire club using clubId
 exports.deleteClub = async (req, res, next) => {
-    try {
-      const clubId = req.params.id; // Get club ID from request param
-  
-      const deletedClub = await Club.findByIdAndDelete(clubId);
-  
-      if (!deletedClub) {
-        return res.status(404).json({ error: "Club not found" });
-      }
-  
-      res.status(200).json({ message: "Club deleted successfully" });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while deleting the Club" });
+  try {
+    const clubId = req.params.id; // Get club ID from request param
+
+    const deletedClub = await Club.findByIdAndDelete(clubId);
+
+    if (!deletedClub) {
+      return res.status(404).json({ error: "Club not found" });
     }
+
+    res.status(200).json({ message: "Club deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while deleting the Club" });
+  }
 };
-  
+
 // GET route for fetching acad events using ID
 exports.getClubById = async (req, res, next) => {
-    try {
-      const clubId = req.params.id; //get club ID from request param
-  
-      const club = await Club.findById(clubId);
-  
-      if (!club) {
-        return res.status(404).json({ error: "Club not found" });
-      }
-  
-      res.status(200).json({ club });
-    } catch (error) {
-      console.error(error);
-      res
-        .status(500)
-        .json({ error: "An error occurred while retrieving the Club" });
+  try {
+    const clubId = req.params.id; //get club ID from request param
+
+    const club = await Club.findById(clubId);
+
+    if (!club) {
+      return res.status(404).json({ error: "Club not found" });
     }
+
+    res.status(200).json({ club });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while retrieving the Club" });
+  }
 };
-  
+
 // GET route for getting all of the clubs
 exports.getAllClub = async (req, res, next) => {
-    try {
-      const clubs = await Club.find();
-  
-      res.status(200).json({ clubs });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        error: "An error occurred while retrieving all Clubs",
-      });
-    }
+  try {
+    const clubs = await Club.find();
+
+    res.status(200).json({ clubs });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "An error occurred while retrieving all Clubs",
+    });
+  }
 };

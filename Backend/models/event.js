@@ -48,7 +48,12 @@ var eventSchema = new Schema(
       enum: ["requested", "rejected", "upcoming", "completed"],
     },
     registrations: [{ type: Schema.ObjectId, ref: "User" }],
-    attendees: [{ type: Schema.ObjectId, ref: "User" }],
+    attendees: [
+      {
+        attendance: [{ type: Schema.ObjectId, ref: "User" }],
+        day: { type: Date },
+      },
+    ],
     broadcast: [{ type: String }],
   },
   { timestamps: true }

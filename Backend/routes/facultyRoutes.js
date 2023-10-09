@@ -19,7 +19,7 @@ router.get("/getallvenue", venueController.getAllVenue);
 router.get("/check-availability", venueController.checkVenueAvailability);
 
 // GET route for getting all of the dates on which a venue is booked using venueId in req param
-router.get("/getbooked-dates/:venueId", venueController.getAllVenue);
+router.get("/getbooked-dates/:venueId", venueController.getBookedDates);
 
 
 ///////////////////////////////////////////

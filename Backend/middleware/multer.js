@@ -149,7 +149,7 @@ exports.xlsxFilter = function (req, file, cb) {
 };
 
 ///////////////////////////////////////////
-//////// **Multer Excel Filters** /////////
+//////// **Multer Excel Storage** /////////
 ///////////////////////////////////////////
 
 exports.studentExcelStorage = multer.diskStorage({

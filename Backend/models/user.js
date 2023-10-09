@@ -22,7 +22,7 @@ var userSchema = new Schema(
       max: 64,
     },
     enrollmentNo: {
-      type: Number,
+      type: String,
       trim: true,
     },
     department: {
