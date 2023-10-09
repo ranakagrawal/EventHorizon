@@ -45,7 +45,7 @@ exports.qrImageStorage = multer.diskStorage({
 //////// **Event Related Multer** /////////
 ///////////////////////////////////////////
 
-const eventLogoBannersStorage = multer.diskStorage({
+exports.eventLogoBannerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     //   cb(null, 'uploads/shop-thumbnail');
     const folderName = `assets/events/${req.body.name}`;
