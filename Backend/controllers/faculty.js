@@ -10,7 +10,7 @@ const StudentAccess = require("../models/studentAccess");
 // club i am part of
 // events organized by my club
 
-// POST route to add new access for students 
+// POST route to add new access for students
 // using studentEmail, facultyId, eventId from req body
 exports.createStudentAccess = async (req, res, next) => {
   try {
@@ -93,62 +93,56 @@ exports.editStudentAccess = async (req, res, next) => {
 // get faculty id from req param
 
 ///*****REMINDER ******/
-//I have changed func name change that name in route 
-exports.getClubsofFaculty = async (req, res, next) => {
-    try {
-      const {facultyId} = req.body;
-      const clubs = await Club.find({ facultyId: studentEmail });
-      if (!student) {
-        return res
-          .status(403)
-          .json({ message: "No student with this email found!" });
+//I have changed func name change that name in route
+exports.getClubsOfFaculty = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const clubs = await Club.find();
+    let facultyClubs = [];
+    clubs.forEach((club) => {
+      let facultys = club.facultyId;
+      for (let facid of facultys) {
+        if (facid.toString() === id) {
+          facultyClubs.push(club);
+          console.log(facultyClubs);
+        }
       }
-      if (student.role !== "student") {
-        return res
-          .status(403)
-          .json({ message: "Please enter a valid student email" });
-      }
-      const newStudentAccess = await new StudentAccess({
-        studentId: student._id,
-        facultyId,
-        eventId,
-        editable: true,
-      });
-  
-      await newStudentAccess.save();
-  
-      res.status(200).json({
-        message: `New Student Access created for ${student.name}`,
-        newStudentAccess,
-      });
-    } catch (err) {
-      res.status(500).json({ message: "Server error!" });
+    });
+    if (facultyClubs.length === 0) {
+      return res.status(403).json({ message: "No clubs found!" });
     }
+
+    res.status(200).json({
+      message: `Clubs found`,
+      facultyClubs,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error!" });
+  }
 };
 
 // GET route to get all the events organized by selected club
 // get clubId from req param
 
 ///*****REMINDER ******/
-//I have changed func name change that name in route 
+//I have changed func name change that name in route
 exports.getEventsByClub = async (req, res, next) => {
-    try {
-      const { facultyId } = req.params;
-  
-      const clubs = await Club.find({ facultyId: facultyId }).populate(
-        "organizedEvents"
-      );
-  
-      if (!clubs || clubs.length === 0) {
-        return res
-          .status(404)
-          .json({ message: "No clubs found for the given facultyId" });
-      }
-  
-      res.status(200).json(clubs);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server Error" });
+  try {
+    const { facultyId } = req.params;
+
+    const clubs = await Club.find({ facultyId: facultyId }).populate(
+      "organizedEvents"
+    );
+
+    if (!clubs || clubs.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No clubs found for the given facultyId" });
     }
-  };
-  
+
+    res.status(200).json(clubs);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+};
