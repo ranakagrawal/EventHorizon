@@ -47,11 +47,22 @@ router.get("/getallacadevent", academicEventsController.getAllAcademicEvent);
 //////// **Faculty Controllers** //////////
 ///l//////0///////r///////|)/////////M/////
 
+//I have changed func name change that name in route
 router.get("/getclubsoffaculty/:id", facultyController.getClubsOfFaculty);
 
+// POST route to add new access for students
+// using studentEmail, facultyId, eventId from req body
 router.post("/createstudentaccess", facultyController.createStudentAccess);
-router.get("/getStudentAccess", facultyController.getStudentAccess);
-router.post("/editStudentAccess", facultyController.editStudentAccess);
-router.get("/eventsbyclub", facultyController.getEventsByClub);
+
+// GET route to fetch ALL students who have access to given event
+// event id is taken in req param
+router.get("/getstudentaccess/:id", facultyController.getStudentAccess);
+
+// POST route to toggle student access
+// req body has studentAccessId
+router.post("/editstudentaccess", facultyController.editStudentAccess);
+
+//I have changed func name change that name in route
+router.get("/eventsbyclub/:id", facultyController.getEventsByClub);
 
 module.exports = router;

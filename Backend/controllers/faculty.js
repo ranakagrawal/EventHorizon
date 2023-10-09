@@ -48,7 +48,7 @@ exports.createStudentAccess = async (req, res, next) => {
 // event id is taken in req param
 exports.getStudentAccess = async (req, res, next) => {
   try {
-    const { eventId } = req.params.id; //get event id from req param
+    const eventId  = req.params.id; //get event id from req param
     const studentAccess = await StudentAccess.find({ eventId: eventId });
     if (studentAccess.length === 0) {
       return res
@@ -128,21 +128,22 @@ exports.getClubsOfFaculty = async (req, res, next) => {
 //I have changed func name change that name in route
 exports.getEventsByClub = async (req, res, next) => {
   try {
-    const { facultyId } = req.params;
+    const clubId  = req.params.id;
 
-    const clubs = await Club.find({ facultyId: facultyId }).populate(
-      "organizedEvents"
-    );
+    const club = await Club.findById(clubId).populate({
+      path:"organizedEvents",
+      select: "name",
+    });
 
-    if (!clubs || clubs.length === 0) {
+    if (!club) {
       return res
         .status(404)
-        .json({ message: "No clubs found for the given facultyId" });
+        .json({ message: "No clubs found" });
     }
 
-    res.status(200).json(clubs);
+    res.status(200).json(club.organizedEvents);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error"});
   }
 };
