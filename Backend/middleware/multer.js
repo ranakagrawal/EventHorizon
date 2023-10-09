@@ -49,6 +49,9 @@ exports.eventLogoBannerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     //   cb(null, 'uploads/shop-thumbnail');
     const folderName = `assets/events/${req.body.name}`;
+    if (!fs.existsSync(folderName)) {
+      fs.mkdirSync(folderName);
+    }
     cb(null, folderName);
   },
   filename: function (req, file, cb) {
