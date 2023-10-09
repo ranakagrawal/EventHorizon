@@ -1,8 +1,16 @@
 const express = require("express");
 const router = express.Router();
+const multer = require("multer");
 const facultyController = require("../controllers/faculty");
 const venueController = require("../controllers/venue");
 const academicEventsController = require("../controllers/academicEvents");
+const multerFunctions = require("../middleware/multer")
+const eventController = require("../controllers/events")
+
+const uploadlogobanner = multer({
+  storage: multerFunctions.eventLogoBannerStorage,
+  fileFilter: multerFunctions.imageFileFilter,
+}).fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }]);
 
 ///////////////////////////////////////////
 ///////// ***GET Venue data*** ////////////
@@ -64,5 +72,13 @@ router.post("/editstudentaccess", facultyController.editStudentAccess);
 
 //I have changed func name change that name in route
 router.get("/eventsbyclub/:id", facultyController.getEventsByClub);
+
+
+
+
+
+
+// POST route to create an event 
+router.post("/createevent",uploadlogobanner, eventController.createEvent);
 
 module.exports = router;
