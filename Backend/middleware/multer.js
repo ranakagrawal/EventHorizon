@@ -45,6 +45,22 @@ exports.qrImageStorage = multer.diskStorage({
 //////// **Event Related Multer** /////////
 ///////////////////////////////////////////
 
+const eventLogoBannersStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    //   cb(null, 'uploads/shop-thumbnail');
+    const folderName = `assets/events/${req.body.name}`;
+    cb(null, folderName);
+  },
+  filename: function (req, file, cb) {
+    if (file.fieldname === "logo") {
+      cb(null, "logo" + path.extname(file.originalname));
+    }
+    if (file.fieldname === "banner") {
+      cb(null, "banner" + path.extname(file.originalname));
+    }
+  },
+});
+
 //Event Logo multer with 'logo' as filename
 exports.eventLogoStorage = multer.diskStorage({
   destination: function (req, file, cb) {
