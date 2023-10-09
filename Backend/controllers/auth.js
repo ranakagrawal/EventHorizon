@@ -25,6 +25,8 @@ exports.login = async (req, res, next) => {
       {
         email: loadedUser.email,
         userId: loadedUser._id.toString(),
+        department: loadedUser.department,
+        role: loadedUser.role,
       },
       "somesecretstring",
       { expiresIn: "1h" }

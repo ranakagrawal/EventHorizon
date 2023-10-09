@@ -559,3 +559,6 @@ exports.getAllClub = async (req, res, next) => {
 
 //create approve event function
 //show all reuested events
+///////////////////////////////////////////
+////////////*Approve  Events*//////////////
+///l//////0///////r///////|)/////////M/////

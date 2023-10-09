@@ -10,6 +10,8 @@ const StudentAccess = require("../models/studentAccess");
 // club i am part of
 // events organized by my club
 
+// POST route to add new access for students 
+// using studentEmail, facultyId, eventId from req body
 exports.createStudentAccess = async (req, res, next) => {
   try {
     const { studentEmail, facultyId, eventId } = req.body;
@@ -24,7 +26,7 @@ exports.createStudentAccess = async (req, res, next) => {
         .status(403)
         .json({ message: "Please enter a valid student email" });
     }
-    const newStudentAccess = await new StudentAccess({
+    const newStudentAccess = new StudentAccess({
       studentId: student._id,
       facultyId,
       eventId,
@@ -42,9 +44,11 @@ exports.createStudentAccess = async (req, res, next) => {
   }
 };
 
+// GET route to fetch ALL students who have access to given event
+// event id is taken in req param
 exports.getStudentAccess = async (req, res, next) => {
   try {
-    const { eventId } = req.body;
+    const { eventId } = req.params.id; //get event id from req param
     const studentAccess = await StudentAccess.find({ eventId: eventId });
     if (studentAccess.length === 0) {
       return res
@@ -60,6 +64,8 @@ exports.getStudentAccess = async (req, res, next) => {
   }
 };
 
+// POST route to toggle student access
+// req body has studentAccessId
 exports.editStudentAccess = async (req, res, next) => {
   try {
     const { studentAccessId } = req.body;
@@ -83,7 +89,12 @@ exports.editStudentAccess = async (req, res, next) => {
   }
 };
 
-exports.getFacultyClubs = async (req, res, next) => {
+// GET route to fetch all of the clubs which this faculty is part of
+// get faculty id from req param
+
+///*****REMINDER ******/
+//I have changed func name change that name in route 
+exports.getClubsofFaculty = async (req, res, next) => {
     try {
       const {facultyId} = req.body;
       const clubs = await Club.find({ facultyId: studentEmail });
@@ -115,7 +126,12 @@ exports.getFacultyClubs = async (req, res, next) => {
     }
 };
 
-exports.facultyClub = async (req, res, next) => {
+// GET route to get all the events organized by selected club
+// get clubId from req param
+
+///*****REMINDER ******/
+//I have changed func name change that name in route 
+exports.getEventsByClub = async (req, res, next) => {
     try {
       const { facultyId } = req.params;
   
