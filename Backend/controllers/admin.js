@@ -2,6 +2,7 @@ const User = require("../models/user");
 const Club = require("../models/club");
 const Venue = require("../models/venue");
 const AcademicEvent = require("../models/academicEvent");
+const Event = require("../models/event");
 const bcrypt = require("bcryptjs");
 const xlsx = require("xlsx");
 
@@ -557,8 +558,63 @@ exports.getAllClub = async (req, res, next) => {
   }
 };
 
-//create approve event function
-//show all reuested events
+
 ///////////////////////////////////////////
 ////////////*Approve  Events*//////////////
 ///l//////0///////r///////|)/////////M/////
+
+// GET route to get all requested events
+exports.getRequestedEvents = async (req, res, next) => {
+  try {
+    const RequestedEvents = await Event.find({ status: 'requested' });
+
+    res.status(200).json({ RequestedEvents });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: "An error occurred while retrieving Requested events",
+    });
+  }
+};
+
+// POST route to approve an event
+// using eventId from req body
+exports.approveEvent = async (req, res, next) => {
+  try {
+    const { eventId } = req.body;
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      { status: 'upcoming' }, // Set the status to 'upcoming' for approval
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json(updatedEvent);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// POST route to reject an event
+// using eventId from req body
+exports.declineEvent = async (req, res, next) => {
+  try {
+    const { eventId } = req.body;
+    const updatedEvent = await Event.findByIdAndUpdate(
+      eventId,
+      { status: 'rejected' }, // Set the status to 'upcoming' for approval
+      { new: true }
+    );
+
+    if (!updatedEvent) {
+      return res.status(404).json({ error: 'Event not found' });
+    }
+
+    res.status(200).json(updatedEvent);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
