@@ -139,4 +139,17 @@ router.get("/getclubbyid/:id", adminController.getClubById);
 // GET route for getting all of the clubs
 router.get("/getallclub", adminController.getAllClub);
 
+///////////////////////////////////////////
+////////////*Approve  Events*//////////////
+///l//////0///////r///////|)/////////M/////
+
+// GET route to get all requested events
+router.get("/requested", adminController.getRequestedEvents);
+
+// POST route to approve an event
+router.post("/approve", adminController.approveEvent);
+
+// POST route to reject an event
+router.post("/reject", adminController.declineEvent);
+
 module.exports = router;
