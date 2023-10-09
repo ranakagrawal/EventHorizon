@@ -15,8 +15,6 @@ exports.createEvent = async (req, res, next) => {
         const logoImage= req.files["logo"][0].path.split("\\").join("/");
         const bannerImage=req.files["banner"][0].path.split("\\").join("/");
 
-        venueImages.push(logoPath,bannerPath);
-
         const targetedDeptArray = targetedDept.split(",");
 
         const startD = new Date(startDate)
