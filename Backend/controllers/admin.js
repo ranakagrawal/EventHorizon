@@ -582,15 +582,22 @@ exports.getRequestedEvents = async (req, res, next) => {
 exports.approveEvent = async (req, res, next) => {
   try {
     const { eventId } = req.body;
-    const updatedEvent = await Event.findByIdAndUpdate(
-      eventId,
-      { status: 'upcoming' }, // Set the status to 'upcoming' for approval
-      { new: true }
-    );
-
+    const updatedEvent = await Event.findById(eventId);
     if (!updatedEvent) {
       return res.status(404).json({ error: 'Event not found' });
     }
+
+    const venue = await Venue.findOne(updatedEvent.venueId);
+    
+    for(let date = updatedEvent.startDate; date<=updatedEvent.endDate; date.setDate(date.getDate() + 1)){
+      venue.bookedOn.push(new Date(date));
+    }
+    venue.hostedEvents.push(updatedEvent._id);
+
+    updatedEvent.status = "upcoming";
+
+    await venue.save();
+    await updatedEvent.save();
 
     res.status(200).json(updatedEvent);
   } catch (error) {

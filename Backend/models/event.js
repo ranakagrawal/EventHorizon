@@ -25,6 +25,10 @@ var eventSchema = new Schema(
     logo: {
       type: String,
     },
+    venueId:{
+      type: Schema.ObjectId,
+      ref: "Venue",
+    },
     clubId: {
       type: Schema.ObjectId,
       ref: "Club",
