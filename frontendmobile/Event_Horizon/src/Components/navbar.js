@@ -12,7 +12,7 @@ const NavBar = () => {
     return (
         <View style={styles.container}>
             <TouchableOpacity onPress={() => { navigator.openDrawer() }}>
-                <MaterialIcons name='menu' size={25} color="white" style={{ marginRight: "15%" }} />
+                <MaterialIcons name='menu' size={25} color="white" style={{ marginRight: "10%" }} />
             </TouchableOpacity>
             <Image
                 source={require('./../../assets/Logo/ehwhite.png')}

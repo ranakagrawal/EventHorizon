@@ -98,7 +98,7 @@ const Login = ({ route }) => {
             if (Email === Data[index].Email) {
                 if (Password === Data[index].password) {
                     alert(`Welcome ${Data[index].name}`);
-                    navigator.navigate('Home', { userData: Data[index] });
+                    navigator.navigate('Xyz', { userData: Data[index] });
                 }
                 else {
                     setPResult('Incorrect Password');
