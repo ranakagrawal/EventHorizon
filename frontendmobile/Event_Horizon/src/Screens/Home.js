@@ -3,6 +3,7 @@ import { View, Text, DrawerLayoutAndroid, TouchableHighlight } from 'react-nativ
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import styles from '../Stylesheet/stylesheet';
+import NavBar from '../Components/navbar';
 
 const Home = () => {
     const navigator = useNavigation();
@@ -27,8 +28,8 @@ const Home = () => {
     };
 
     return (
-
         <View style={styles.AppBg}>
+            {/* <NavBar onPress={() => { navigator.openDrawer() }} /> */}
             {/* <NavBar /> */}
             {/* <Text style={styles.TextStyle}>Hello World!</Text> */}
             <View style={styles.AppBg}>

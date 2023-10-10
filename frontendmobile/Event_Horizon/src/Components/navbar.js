@@ -5,24 +5,24 @@ import { useNavigation } from '@react-navigation/native';
 
 let mobileW = Dimensions.get('window').width;
 
-const NavBar = ({ onPress }) => {
+const NavBar = () => {
 
     const navigator = useNavigation();
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={onPress}>
-                <MaterialIcons name='menu' size={25} color="white" style={{ marginRight: "18%" }} />
+            <TouchableOpacity onPress={() => { navigator.openDrawer() }}>
+                <MaterialIcons name='menu' size={25} color="white" style={{ marginRight: "15%" }} />
             </TouchableOpacity>
             <Image
                 source={require('./../../assets/Logo/ehwhite.png')}
                 style={{ width: mobileW * 0.12, resizeMode: 'contain' }}
             />
             <TouchableOpacity onPress={() => {
-                navigator.reset({
-                    index: 0,
-                    routes: [{ name: 'Home' }],
-                });
+                // navigator.reset({
+                //     index: 0,
+                //     routes: [{ name: 'Home' }],
+                // });
             }}>
                 <Text style={styles.title}>EVENT HORIZON</Text>
             </TouchableOpacity>
