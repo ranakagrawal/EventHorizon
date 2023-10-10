@@ -31,7 +31,7 @@ exports.login = async (req, res, next) => {
       "somesecretstring",
       { expiresIn: "1h" }
     );
-    res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+    res.status(200).json({ token: token, userId: loadedUser._id.toString(), department: loadedUser.department, role: loadedUser.role,});
   } catch (err) {
     
     return res.status(500).json({message:"Server Error"});
