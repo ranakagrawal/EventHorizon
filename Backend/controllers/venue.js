@@ -1,4 +1,5 @@
 const Venue = require("../models/venue");
+const Club = require("../models/club");
 
 // GET route for fetching venue using ID
 exports.getVenueById = async (req, res, next) => {
@@ -82,5 +83,51 @@ exports.getBookedDates = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+exports.getPreEventFormData = async (req, res, next) => {
+  try {
+    //fetching clubs associated with the faculty
+    const { id } = req.params; //facultyId
+    const clubs = await Club.find();
+    let facultyClubs = [];
+    clubs.forEach((club) => {
+      let facultys = club.facultyId;
+      for (let facid of facultys) {
+        if (facid.toString() === id) {
+          facultyClubs.push({ clubId: club._id, clubName: club.name });
+          // console.log(facultyClubs);
+        }
+      }
+    });
+    if (facultyClubs.length === 0) {
+      return res.status(403).json({ message: "No clubs found!" });
+    }
+
+    //fetching all venues with booking dates past today
+    const venues = await Venue.find();
+    if (!venues.length) {
+      return res.status(404).json({ message: "Venue not found" });
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Filter and sort booked dates greater than or equal to today
+    const datedVenues = venues.map((venue) => {
+      venue.bookedOn
+        .filter((date) => new Date(date) >= today)
+        .sort((a, b) => new Date(a) - new Date(b));
+
+      return { id: venue._id, name: venue.name, bookedOn: venue.bookedOn };
+    });
+
+    res.status(200).json({
+      message: `Clubs and venues`,
+      clubs: facultyClubs,
+      venues: datedVenues,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error!" });
   }
 };
