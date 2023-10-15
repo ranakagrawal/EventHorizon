@@ -143,7 +143,7 @@ const EventPage = () => {
 
     // Function to render a separator between event cards
     const flatListItemSeparator = () => {
-        return <View style={{ height: mobileW * 0.05 }} />;
+        return <View style={{ height: mobileW * 0.01 }} />;
     };
 
 
