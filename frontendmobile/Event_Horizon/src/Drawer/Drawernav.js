@@ -11,15 +11,15 @@ const Xyz = ({ navigation }) => {
     return (
         <Drawer.Navigator drawerContent={props => <CustomDrawer {...props} />}>
             <Drawer.Screen
-                name="EventPage"
-                component={EventPage}
+                name="Home"
+                component={Home}
                 options={{
                     header: () => <NavBar />,
                 }}
             />
             <Drawer.Screen
-                name="Home"
-                component={Home}
+                name="EventPage"
+                component={EventPage}
                 options={{
                     header: () => <NavBar />,
                 }}
