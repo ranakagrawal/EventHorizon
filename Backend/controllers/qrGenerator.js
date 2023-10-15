@@ -5,9 +5,9 @@ const AcademicEvent = require("../models/academicEvent");
 const Event = require("../models/event");
 const bcrypt = require("bcryptjs");
 const xlsx = require("xlsx");
-import fs from "fs";
-import fetch from "node-fetch";
-import FileType from "file-type";
+const fs = require("fs");
+// import fetch from "node-fetch";
+const fetch = require("node-fetch-commonjs");
 
 exports.createUser = async (req, res, next) => {
   try {
@@ -33,18 +33,28 @@ exports.createUser = async (req, res, next) => {
 
     const userId = newUser._id;
 
-    const response = await fetch(`http(s)://api.qrserver.com/v1/create-qr-code/?data=${userId}`);
+    const response = await fetch(
+      `http://api.qrserver.com/v1/create-qr-code/?data=${userId}`
+    );
+    if (!response.arrayBuffer) {
+      await User.findByIdAndDelete(userId);
+      return res.status(400).json({ message: "failed to create user" });
+    }
     const arrayBuffer = await response.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
-    const fileType = await FileType.fromBuffer(buffer);
-    if (fileType.ext) {
-      const outputFileName = `${userId}.${fileType.ext}`;
-      fs.createWriteStream(`../assets/qrImages/${outputFileName}`).write(buffer);
-    } else {
-      console.log(
-        "File type could not be reliably determined! The binary data may be malformed! No file saved!"
-      );
-    }
+    const outputFileName = `${userId}.png`;
+    fs.createWriteStream(`./assets/qrImages/${outputFileName}`).write(
+      buffer,
+      async function (err, writtenbytes) {
+        if (err) {
+            await User.findByIdAndDelete(userId);
+            console.log("Cant write to file");
+            return res.status(400).json({ message: "failed to create user",err });
+        } else {
+          console.log("QR created and added to file");
+        }
+      }
+    );
 
     res.status(201).json({ message: "new user created", user: newUser });
   } catch (error) {
