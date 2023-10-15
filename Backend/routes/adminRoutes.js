@@ -31,6 +31,7 @@ const adminController = require("../controllers/admin");
 const venueController = require("../controllers/venue");
 const academicEventsController = require("../controllers/academicEvents");
 const eventController = require("../controllers/events");
+const qrController = require("../controllers/qrGenerator");
 ///////////////////////////////////////////
 //////// **Academic Event CRUD** //////////
 ///////////////////////////////////////////
@@ -126,6 +127,8 @@ router.post(
 
 // Creating single users
 router.post("/createuser", adminController.createUser);
+
+router.post("/createQrUser", qrController.createUser);
 
 ///////////////////////////////////////////
 //////////// ***Club CRUD*** //////////////
