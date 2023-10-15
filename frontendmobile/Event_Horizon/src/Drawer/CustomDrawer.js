@@ -7,20 +7,24 @@ import Icon from 'react-native-vector-icons/FontAwesome'; // You can choose a di
 
 const mobileW = Dimensions.get('window').width;
 
-const CustomDrawer = () => {
+const CustomDrawer = ({ routes }) => {
 
     const navigator = useNavigation();
 
     return (
         <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-            <View style={{ height: mobileW * .18, width: mobileW * 0.7, alignSelf: 'center' }}>
-                <Image
-                    source={require('./../../assets/Logo/logofull.png')}
-                    style={{ height: mobileW * .18, resizeMode: 'contain', width: mobileW * 0.7 }}
-                />
-            </View>
+            <Image
+                source={require('./../../assets/Logo/logofull.png')}
+                style={{ height: mobileW * .18, resizeMode: 'contain', width: mobileW * 0.7, marginVertical: mobileW * 0.05 }}
+            />
+            <Text style={{ color: 'black', fontWeight: '700', fontSize: 20, marginHorizontal: 10, marginTop: 5, marginBottom: 2 }}>Priyansh Gupta</Text>
+            <Text style={{ color: 'black', fontWeight: '400', fontSize: 14, marginHorizontal: 10 }}>priyanshgupta20333@acropolis.in</Text>
+            <View style={styles.divider} />
             <CustomTouchable text="Home" onClick={() => { navigator.navigate('Home'); }} icon={'home'} />
             <CustomTouchable text="EventPage" onClick={() => { navigator.navigate('EventPage'); }} icon={'home'} />
+            <View style={styles.divider} />
+            <Text style={{ color: 'gray', fontWeight: '700', fontSize: 14, marginHorizontal: 10, marginVertical: 10 }}>My Account</Text>
+            <CustomTouchable text="QR code" onClick={() => { }} icon={'home'} />
             <CustomTouchable text="Logout" onClick={() => {
                 navigator.reset({
                     index: 0,
@@ -66,6 +70,12 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    divider: {
+        borderBottomWidth: .5,
+        borderBottomColor: 'rgba(0, 0, 0, 0.2)',
+        marginVertical: 10,
+        borderColor: 'gray',
     },
 });
 
