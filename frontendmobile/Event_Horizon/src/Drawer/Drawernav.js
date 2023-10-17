@@ -24,13 +24,13 @@ const Xyz = ({ navigation }) => {
                     header: () => <NavBar />,
                 }}
             />
-            <Drawer.Screen
+            {/* <Drawer.Screen
                 name="DetailedEvent"
                 component={DetailedEventPage}
                 options={{
                     header: () => <NavBar />,
                 }}
-            />
+            /> */}
         </Drawer.Navigator>
     );
 };
