@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, Button, TouchableOpacity, TextInput, ScrollView, Image } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const mobileW = Dimensions.get('window').width;
 
@@ -12,12 +13,19 @@ const dummyVenues = [
     { id: 3, name: 'Venue 3', value: 'venue-3', bookedDates: [] },
 ];
 
+const dummyCheckbox = [ // Dummy data array for eligibility options
+    { label: 'Option 1', checked: false },
+    { label: 'Option 2', checked: false },
+    { label: 'Option 3', checked: false },
+];
+
 const CreateEventPage = () => {
     const [eventName, setEventName] = useState('');
     const [description, setDescription] = useState('');
     const [organizer, setOrganizer] = useState('');
     const [logoImage, setLogoImage] = useState(null);
     const [eventPoster, setEventPoster] = useState(null);
+    const [eligibility, setEligibility] = useState(dummyCheckbox);
     const [selectedVenue, setSelectedVenue] = useState(dummyVenues[0].value);
     const [selectedDate, setSelectedDate] = useState(null);
     const [disabledDate, setDisabledDate] = useState(null);
@@ -26,6 +34,32 @@ const CreateEventPage = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
 
+    const selectImage = (type) => {
+        const options = {
+            mediaType: type,
+            selectionLimit: 1,
+        };
+
+        launchImageLibrary(options, (response) => {
+            if (response.didCancel) {
+                console.log('User cancelled image selection');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else {
+                if (type === 'photo') {
+                    setLogoImage({ uri: response.assets[0].uri });
+                } else if (type === 'mixed') {
+                    setEventPoster({ uri: response.assets[0].uri });
+                }
+            }
+        });
+    };
+
+    const toggleCheckBox = (index) => {
+        const updatedEligibility = [...eligibility];
+        updatedEligibility[index].checked = !updatedEligibility[index].checked;
+        setEligibility(updatedEligibility);
+    };
 
     // const handleLogoImageUpload = (event) => {
     //     const selectedImage = event.target.files[0];
@@ -104,8 +138,40 @@ const CreateEventPage = () => {
                 placeholderTextColor={'rgba(0,0,0,0.5)'}
             />
 
+            {/* Club logo image picker */}
+            <Text style={styles.label}>Upload Club Logo:</Text>
+            <TouchableOpacity style={styles.fileInputButton} onPress={() => selectImage('photo')}>
+                <Text style={styles.fileInputText}>Choose File</Text>
+            </TouchableOpacity>
+            {logoImage && (
+                <Image source={logoImage} style={styles.imagePreview} />
+            )}
 
+            {/* Poster image picker */}
+            <Text style={styles.label}>Upload Event Poster:</Text>
+            <TouchableOpacity style={styles.fileInputButton} onPress={() => selectImage('mixed')}>
+                <Text style={styles.fileInputText}>Choose File</Text>
+            </TouchableOpacity>
+            {eventPoster && (
+                <Image source={eventPoster} style={styles.imagePreview} />
+            )}
 
+            {/* <Text style={styles.label}>Eligibility:</Text>
+            {eligibility.map((item, index) => (
+                <ListItem
+                    key={index}
+                    title={item.label}
+                    bottomDivider
+                    rightElement={ // Checkbox
+                        <CheckBox
+                            checked={item.checked}
+                            onPress={() => toggleCheckBox(index)}
+                        />
+                    }
+                />
+            ))} */}
+
+            {/* Select venue from picker dropdown */}
             <Text style={styles.label}>Select Venue</Text>
             <Picker
                 selectedValue={selectedVenue}
@@ -114,18 +180,9 @@ const CreateEventPage = () => {
             >
                 {renderPickerItems()}
             </Picker>
-            <Text style={styles.label}>Select Date</Text>
-            {/* {
-                disabledDate ? <DatePicker
-                    style={styles.datePicker}
-                    date={selectedDate}
-                    onDateChange={(date) => setSelectedDate(date)}
-                    mode="date"
-                    format="YYYY-MM-DD"
-                    minimumDate={new Date()}
-                    disabled={disabledDate}
-                /> : null
-            } */}
+
+            {/* Start date selection */}
+            <Text style={styles.label}>Select Start Date</Text>
             <Calendar
                 enableSwipeMonths
                 onDayPress={handleDayPress}
@@ -203,6 +260,19 @@ const styles = StyleSheet.create({
         borderWidth: mobileW * .005,
         marginHorizontal: mobileW * 0.04,
         borderRadius: 10,
+    },
+    fileInputButton: {
+        backgroundColor: 'lightgray',
+        padding: 10,
+        marginBottom: 10,
+    },
+    fileInputText: {
+        color: 'black',
+    },
+    imagePreview: {
+        width: 100,
+        height: 100,
+        resizeMode: 'cover',
     },
 });
 
