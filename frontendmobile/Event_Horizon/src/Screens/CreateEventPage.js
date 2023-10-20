@@ -4,6 +4,8 @@ import DatePicker from 'react-native-date-picker';
 import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
 import { launchImageLibrary } from 'react-native-image-picker';
+import CheckBox from '@react-native-community/checkbox';
+import { ListItem } from 'react-native-elements';
 
 const mobileW = Dimensions.get('window').width;
 
@@ -11,6 +13,12 @@ const dummyVenues = [
     { id: 1, name: 'Venue 1', value: 'venue-1', bookedDates: ['2023-10-25'] },
     { id: 2, name: 'Venue 2', value: 'venue-2', bookedDates: ['2023-10-20', '2023-10-22'] },
     { id: 3, name: 'Venue 3', value: 'venue-3', bookedDates: [] },
+];
+
+const dummyClubs = [
+    { id: 1, name: 'ACM', value: 'acm' },
+    { id: 2, name: 'GDSC', value: 'gdsc' },
+    { id: 3, name: 'UiPath', value: 'uipath' },
 ];
 
 const dummyCheckbox = [ // Dummy data array for eligibility options
@@ -27,12 +35,17 @@ const CreateEventPage = () => {
     const [eventPoster, setEventPoster] = useState(null);
     const [eligibility, setEligibility] = useState(dummyCheckbox);
     const [selectedVenue, setSelectedVenue] = useState(dummyVenues[0].value);
-    const [selectedDate, setSelectedDate] = useState(null);
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [lastDate, setLastDate] = useState(null);
     const [disabledDate, setDisabledDate] = useState(null);
     const [markedDates, setMarkedDates] = useState(null);
 
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
+
+    // console.log("formattedToday " + formattedToday);
+    // console.log("Start date " + startDate);
 
     const selectImage = (type) => {
         const options = {
@@ -72,7 +85,7 @@ const CreateEventPage = () => {
         if (venue) {
             console.log(selectedVenue);
             setDisabledDate(venue.bookedDates);
-            setSelectedDate(null);
+            setStartDate(null);
         }
     }, [selectedVenue]);
 
@@ -88,16 +101,25 @@ const CreateEventPage = () => {
     }, [disabledDate]);
 
     const handleDayPress = (date) => {
-        setSelectedDate(date.dateString);
+        setStartDate(date.dateString);
     };
 
     useEffect(() => {
-        console.log(selectedDate);
-    }, [selectedDate]);
+        console.log(startDate);
+    }, [startDate]);
 
+    useEffect(() => {
+        console.log(eligibility);
+    }, [eligibility]);
 
-    const renderPickerItems = () => {
+    const renderPickerItemsVenues = () => {
         return dummyVenues.map((item) => (
+            <Picker.Item key={item.id} value={item.value} label={item.name} />
+        ));
+    };
+
+    const renderPickerItemsClubs = () => {
+        return dummyClubs.map((item) => (
             <Picker.Item key={item.id} value={item.value} label={item.name} />
         ));
     };
@@ -120,6 +142,7 @@ const CreateEventPage = () => {
             {/* Event desc input */}
             <Text style={styles.label}>Description :</Text>
             <TextInput
+                color={'black'}
                 style={styles.input}
                 onChangeText={setDescription}
                 value={description}
@@ -130,13 +153,13 @@ const CreateEventPage = () => {
             />
             {/* Organizers Club name input */}
             <Text style={styles.label}>Organized By:</Text>
-            <TextInput
-                style={styles.input}
-                onChangeText={setOrganizer}
-                value={organizer}
-                placeholder={'Enter Organizer Name'}
-                placeholderTextColor={'rgba(0,0,0,0.5)'}
-            />
+            <Picker
+                selectedValue={organizer}
+                onValueChange={(itemValue) => setOrganizer(itemValue)}
+                style={styles.picker}
+            >
+                {renderPickerItemsClubs()}
+            </Picker>
 
             {/* Club logo image picker */}
             <Text style={styles.label}>Upload Club Logo:</Text>
@@ -144,7 +167,7 @@ const CreateEventPage = () => {
                 <Text style={styles.fileInputText}>Choose File</Text>
             </TouchableOpacity>
             {logoImage && (
-                <Image source={logoImage} style={styles.imagePreview} />
+                <Image source={logoImage} style={styles.imagePreviewLogo} />
             )}
 
             {/* Poster image picker */}
@@ -156,20 +179,17 @@ const CreateEventPage = () => {
                 <Image source={eventPoster} style={styles.imagePreview} />
             )}
 
-            {/* <Text style={styles.label}>Eligibility:</Text>
+            <Text style={styles.label}>Eligibility:</Text>
             {eligibility.map((item, index) => (
-                <ListItem
-                    key={index}
-                    title={item.label}
-                    bottomDivider
-                    rightElement={ // Checkbox
-                        <CheckBox
-                            checked={item.checked}
-                            onPress={() => toggleCheckBox(index)}
-                        />
-                    }
-                />
-            ))} */}
+                <View key={index} style={styles.checkboxContainer}>
+                    <Text style={styles.checkboxLabel}>{item.label}</Text>
+                    <CheckBox
+                        value={item.checked}
+                        onValueChange={() => toggleCheckBox(index)}
+                        tintColors={{ true: 'rgba(62, 168, 232, 1)', false: 'rgba(62, 168, 232, 1)' }}
+                    />
+                </View>
+            ))}
 
             {/* Select venue from picker dropdown */}
             <Text style={styles.label}>Select Venue</Text>
@@ -178,7 +198,7 @@ const CreateEventPage = () => {
                 onValueChange={(itemValue) => setSelectedVenue(itemValue)}
                 style={styles.picker}
             >
-                {renderPickerItems()}
+                {renderPickerItemsVenues()}
             </Picker>
 
             {/* Start date selection */}
@@ -193,16 +213,58 @@ const CreateEventPage = () => {
                     borderRadius: 5,
                 }}
                 markedDates={{
-                    [selectedDate]: { selected: true, selectedColor: 'rgba(62, 168, 232, 1)' }, // Adjust the color as needed
+                    [startDate]: { selected: true, selectedColor: 'rgba(62, 168, 232, 1)' }, // Adjust the color as needed
                     ...markedDates, // Include other marked dates
                 }}
                 minDate={formattedToday}
             />
+
+            {/* End date selection */}
+            <Text style={styles.label}>Select End Date</Text>
+            <Calendar
+                enableSwipeMonths
+                onDayPress={(date) => {
+                    setEndDate(date.dateString);
+                }}
+                style={{
+                    borderWidth: 2,
+                    borderColor: 'gray',
+                    margin: mobileW * 0.04,
+                    borderRadius: 5,
+                }}
+                markedDates={{
+                    [endDate]: { selected: true, selectedColor: 'rgba(62, 168, 232, 1)' }, // Adjust the color as needed
+                    ...markedDates, // Include other marked dates
+                }}
+                minDate={startDate ? startDate : formattedToday}
+            />
+
+            {/* last date selection */}
+            <Text style={styles.label}>Select Last Date to Register</Text>
+            <Calendar
+                enableSwipeMonths
+                onDayPress={(date) => {
+                    setLastDate(date.dateString);
+                }}
+                style={{
+                    borderWidth: 2,
+                    borderColor: 'gray',
+                    margin: mobileW * 0.04,
+                    borderRadius: 5,
+                }}
+                markedDates={{
+                    [lastDate]: { selected: true, selectedColor: 'rgba(62, 168, 232, 1)' }, // Adjust the color as needed
+                    ...markedDates, // Include other marked dates
+                }}
+                minDate={formattedToday}
+                maxDate={startDate}
+            />
+
             <TouchableOpacity style={styles.Button}
                 onPress={() => {
-                    alert(`Requested for ${selectedVenue} at ${selectedDate}`);
+                    alert(`Requested for ${selectedVenue} at ${startDate}`);
                 }}
-                disabled={selectedDate ? false : true}
+                disabled={startDate ? false : true}
             >
                 <Text style={{
                     fontWeight: 'bold',
@@ -262,17 +324,39 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     fileInputButton: {
-        backgroundColor: 'lightgray',
+        backgroundColor: 'rgba(62, 168, 232, 1)',
         padding: 10,
-        marginBottom: 10,
+        marginBottom: mobileW * 0.008,
+        width: mobileW * 0.3,
+        alignSelf: 'center',
+        alignItems: 'center',
+        borderRadius: 10,
     },
     fileInputText: {
         color: 'black',
     },
-    imagePreview: {
-        width: 100,
-        height: 100,
+    imagePreviewLogo: {
+        width: mobileW * 0.4,
+        height: mobileW * 0.4,
         resizeMode: 'cover',
+        alignSelf: 'center',
+        borderRadius: 10,
+    },
+    imagePreview: {
+        width: mobileW * 0.8,
+        height: mobileW,
+        resizeMode: 'cover',
+        alignSelf: 'center',
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        justifyContent: 'center'
+    },
+    checkboxLabel: {
+        color: 'black',
+        marginRight: 10,
     },
 });
 
