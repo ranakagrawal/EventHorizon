@@ -125,6 +125,14 @@ const DetailedEventPage = ({ route }) => {
                     </TouchableOpacity>
                 </View>
             </View>
+            <TouchableOpacity style={{ height: mobileW * 0.12, width: mobileW * 0.12, backgroundColor: 'rgba(62, 168, 232,1)', position: 'absolute', alignSelf: 'flex-start', marginTop: mobileW * 1.85, borderRadius: mobileW * 0.12, marginLeft: mobileW * 0.83, alignItems: 'center' }}>
+                <Icon
+                    name="pencil"
+                    size={28}
+                    color='white'
+                    style={{ justifyContent: 'center', alignSelf: 'center', marginVertical: 8 }}
+                />
+            </TouchableOpacity>
         </View>
     );
 };

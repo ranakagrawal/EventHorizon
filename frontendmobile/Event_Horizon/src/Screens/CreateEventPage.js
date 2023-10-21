@@ -254,7 +254,7 @@ const CreateEventPage = () => {
                 }}
                 markedDates={{
                     [lastDate]: { selected: true, selectedColor: 'rgba(62, 168, 232, 1)' }, // Adjust the color as needed
-                    ...markedDates, // Include other marked dates
+                    // ...markedDates, // Include other marked dates
                 }}
                 minDate={formattedToday}
                 maxDate={startDate}
